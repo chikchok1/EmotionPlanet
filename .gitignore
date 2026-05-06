@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.playwright-mcp/
+
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+/.DS_Store
+/*.png
+/binary_files.json
+/binary_manifest.json
+/cached_preview_urls.json
+
+/public/figma-assets-original/
