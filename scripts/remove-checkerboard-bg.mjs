@@ -4,8 +4,8 @@
  */
 
 import { createCanvas, loadImage } from 'canvas';
-import { existsSync, mkdirSync, copyFileSync, readdirSync } from 'fs';
-import { join, dirname } from 'path';
+import { existsSync, mkdirSync, copyFileSync, readdirSync, statSync } from 'fs';
+import { join, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -115,28 +115,44 @@ async function main() {
     console.log(`📁 백업 폴더 생성: ${BACKUP_DIR}`);
   }
 
-  const files = readdirSync(ASSET_DIR).filter(f => f.endsWith('.png'));
+  // 재귀적으로 PNG 파일 수집
+  function collectPngs(dir) {
+    const results = [];
+    for (const entry of readdirSync(dir)) {
+      const fullPath = join(dir, entry);
+      if (statSync(fullPath).isDirectory()) {
+        results.push(...collectPngs(fullPath));
+      } else if (entry.endsWith('.png')) {
+        results.push(fullPath);
+      }
+    }
+    return results;
+  }
 
-  if (files.length === 0) {
+  const filePaths = collectPngs(ASSET_DIR);
+
+  if (filePaths.length === 0) {
     console.log('⚠️  PNG 파일이 없습니다.');
     return;
   }
 
-  console.log(`🌍 ${files.length}개 PNG 파일 처리 시작...\n`);
+  console.log(`🌍 ${filePaths.length}개 PNG 파일 처리 시작...\n`);
 
   // 밝은 콘텐츠가 많은 파일은 보호 모드로 처리
   const PROTECT_PATTERNS = ['glow', 'effect_light', 'overlay'];
 
-  for (const file of files) {
-    const filePath = join(ASSET_DIR, file);
-    const backupPath = join(BACKUP_DIR, file);
-    const protect = PROTECT_PATTERNS.some(p => file.includes(p));
+  for (const filePath of filePaths) {
+    const relPath = relative(ASSET_DIR, filePath);
+    const backupPath = join(BACKUP_DIR, relPath);
+    // 백업 폴더 내 하위 디렉토리도 생성
+    mkdirSync(dirname(backupPath), { recursive: true });
+    const protect = PROTECT_PATTERNS.some(p => relPath.includes(p));
     try {
       const cleared = await removeCheckerboard(filePath, backupPath, protect);
       if (protect) process.stdout.write('🛡️  (보호모드) ');
-      console.log(`✅ ${file}: ${cleared.toLocaleString()}개 픽셀 투명화 완료`);
+      console.log(`✅ ${relPath}: ${cleared.toLocaleString()}개 픽셀 투명화 완료`);
     } catch (err) {
-      console.error(`❌ ${file}: 오류 발생 - ${err.message}`);
+      console.error(`❌ ${relPath}: 오류 발생 - ${err.message}`);
     }
   }
 

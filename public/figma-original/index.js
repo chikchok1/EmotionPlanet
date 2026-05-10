@@ -5255,12 +5255,7 @@ function Ih() {
   );
 }
 const SpaceBgFileMap = {
-  "galaxy-bg": "01_classic_deep_space.png",
-  "constellation-bg": "12_distant_planets.png",
-  "aurora-bg": "04_green_aurora_space.png",
-  "space-bg": "12_distant_planets.png",
-  "moon-bg": "10_moonlit_space.png",
-  "crystal-bg": "08_blue_crystal_space.png",
+  "classic-deep-bg": "01_classic_deep_space.png",
   "purple-galaxy-bg": "02_purple_galaxy.png",
   "cyan-nebula-bg": "03_cyan_nebula.png",
   "green-aurora-bg": "04_green_aurora_space.png",
@@ -5269,6 +5264,7 @@ const SpaceBgFileMap = {
   "pink-dream-bg": "07_pink_dream_space.png",
   "blue-crystal-bg": "08_blue_crystal_space.png",
   "meteor-shower-bg": "09_meteor_shower.png",
+  "moon-bg": "10_moonlit_space.png",
   "cosmic-vortex-bg": "11_cosmic_vortex.png",
   "distant-planets-bg": "12_distant_planets.png"
 };
@@ -5292,9 +5288,10 @@ function zh() {
             style: {
               zIndex: 1,
               backgroundImage: Qh,
-              backgroundSize: "390px auto",
+              backgroundSize: "100% auto",
               backgroundRepeat: "repeat-y",
-              backgroundPosition: "top center"
+              backgroundPosition: "top center",
+              imageRendering: "high-quality"
             },
             children: [
               /* @__PURE__ */ y(
@@ -10265,22 +10262,18 @@ const g0 = {
   { id: "rainbow-ring", name: "무지개 링", category: "ring", price: 120, col: 4, row: 4, rarity: "rare" },
   { id: "satellite", name: "위성", category: "ring", price: 200, col: 7, row: 4, rarity: "legendary" },
   // Backgrounds (row 6)
-  { id: "galaxy-bg", name: "은하수 배경", category: "background", price: 150, col: 0, row: 6, rarity: "epic" },
-  { id: "constellation-bg", name: "별자리 배경", category: "background", price: 130, col: 1, row: 6, rarity: "rare" },
-  { id: "aurora-bg", name: "오로라 배경", category: "background", price: 140, col: 2, row: 6, rarity: "epic" },
-  { id: "space-bg", name: "우주 배경", category: "background", price: 120, col: 3, row: 6, rarity: "rare" },
-  { id: "moon-bg", name: "달밤 배경", category: "background", price: 110, col: 5, row: 6, rarity: "rare" },
-  { id: "crystal-bg", name: "크리스탈 배경", category: "background", price: 160, col: 6, row: 6, rarity: "epic" },
-  { id: "purple-galaxy-bg", name: "보라 은하 배경", category: "background", price: 140, col: 0, row: 6, rarity: "epic" },
-  { id: "cyan-nebula-bg", name: "시안 성운 배경", category: "background", price: 130, col: 1, row: 6, rarity: "rare" },
-  { id: "green-aurora-bg", name: "녹색 오로라 배경", category: "background", price: 140, col: 2, row: 6, rarity: "epic" },
-  { id: "red-mars-bg", name: "화성의 밤 배경", category: "background", price: 120, col: 3, row: 6, rarity: "rare" },
+  { id: "classic-deep-bg", name: "클래식 심우주 배경", category: "background", price: 100, col: 0, row: 6, rarity: "common" },
+  { id: "purple-galaxy-bg", name: "보라 은하 배경", category: "background", price: 140, col: 1, row: 6, rarity: "epic" },
+  { id: "cyan-nebula-bg", name: "시안 성운 배경", category: "background", price: 130, col: 2, row: 6, rarity: "rare" },
+  { id: "green-aurora-bg", name: "녹색 오로라 배경", category: "background", price: 140, col: 3, row: 6, rarity: "epic" },
+  { id: "red-mars-bg", name: "화성의 밤 배경", category: "background", price: 120, col: 4, row: 6, rarity: "rare" },
   { id: "golden-star-bg", name: "황금 별밭 배경", category: "background", price: 150, col: 5, row: 6, rarity: "epic" },
   { id: "pink-dream-bg", name: "핑크 드림 배경", category: "background", price: 130, col: 6, row: 6, rarity: "rare" },
-  { id: "blue-crystal-bg", name: "블루 크리스탈 배경", category: "background", price: 160, col: 0, row: 6, rarity: "legendary" },
-  { id: "meteor-shower-bg", name: "유성우 배경", category: "background", price: 170, col: 1, row: 6, rarity: "legendary" },
-  { id: "cosmic-vortex-bg", name: "코스믹 소용돌이 배경", category: "background", price: 180, col: 2, row: 6, rarity: "legendary" },
-  { id: "distant-planets-bg", name: "먼 행성 배경", category: "background", price: 160, col: 3, row: 6, rarity: "epic" }
+  { id: "blue-crystal-bg", name: "블루 크리스탈 배경", category: "background", price: 160, col: 7, row: 6, rarity: "legendary" },
+  { id: "meteor-shower-bg", name: "유성우 배경", category: "background", price: 170, col: 0, row: 7, rarity: "legendary" },
+  { id: "moon-bg", name: "달밤 배경", category: "background", price: 110, col: 1, row: 7, rarity: "rare" },
+  { id: "cosmic-vortex-bg", name: "코스믹 소용돌이 배경", category: "background", price: 180, col: 2, row: 7, rarity: "legendary" },
+  { id: "distant-planets-bg", name: "먼 행성 배경", category: "background", price: 160, col: 3, row: 7, rarity: "epic" }
 ], Pa = [
   "오늘도 수고했어! 🌟",
   "좋은 하루였어 😊",
@@ -10380,16 +10373,11 @@ const Si = M0(), L0 = F0(Si), k0 = {
     "crown",
     "cat-ears",
     "sneakers",
-    "galaxy-bg",
     "star-ring",
     "star-band",
-    "space-bg",
     "glow-ring",
     "sprout",
-    "constellation-bg",
-    "aurora-bg",
-    "moon-bg",
-    "crystal-bg",
+    "classic-deep-bg",
     "purple-galaxy-bg",
     "cyan-nebula-bg",
     "green-aurora-bg",
@@ -10398,6 +10386,7 @@ const Si = M0(), L0 = F0(Si), k0 = {
     "pink-dream-bg",
     "blue-crystal-bg",
     "meteor-shower-bg",
+    "moon-bg",
     "cosmic-vortex-bg",
     "distant-planets-bg"
   ],
@@ -11699,7 +11688,18 @@ function H0({
       },
       children: [
         /* @__PURE__ */ R("div", { className: "relative mb-1", children: [
-          /* @__PURE__ */ y(Pi, { col: e.col, row: e.row, size: 52 }),
+          SpaceBgFileMap[e.id]
+            ? /* @__PURE__ */ y("div", {
+                style: {
+                  width: 52, height: 52,
+                  backgroundImage: `url('/figma-assets/space_backgrounds_1080x1920/${SpaceBgFileMap[e.id]}')`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  borderRadius: "50%",
+                  flexShrink: 0
+                }
+              })
+            : /* @__PURE__ */ y(Pi, { col: e.col, row: e.row, size: 52 }),
           n && /* @__PURE__ */ y(
             "div",
             {
