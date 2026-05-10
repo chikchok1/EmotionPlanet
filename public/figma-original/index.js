@@ -4919,7 +4919,7 @@ function uh() {
       "div",
       {
         className: "absolute inset-0",
-        style: { background: "radial-gradient(ellipse at 50% 0%, #0f0a2e 0%, #060714 60%, #030309 100%)" }
+        style: { background: `#060714` }
       }
     ),
     ch.map((e) => /* @__PURE__ */ y(
@@ -5254,7 +5254,30 @@ function Ih() {
     }
   );
 }
+const SpaceBgFileMap = {
+  "galaxy-bg": "01_classic_deep_space.png",
+  "constellation-bg": "12_distant_planets.png",
+  "aurora-bg": "04_green_aurora_space.png",
+  "space-bg": "12_distant_planets.png",
+  "moon-bg": "10_moonlit_space.png",
+  "crystal-bg": "08_blue_crystal_space.png",
+  "purple-galaxy-bg": "02_purple_galaxy.png",
+  "cyan-nebula-bg": "03_cyan_nebula.png",
+  "green-aurora-bg": "04_green_aurora_space.png",
+  "red-mars-bg": "05_red_mars_night.png",
+  "golden-star-bg": "06_golden_star_field.png",
+  "pink-dream-bg": "07_pink_dream_space.png",
+  "blue-crystal-bg": "08_blue_crystal_space.png",
+  "meteor-shower-bg": "09_meteor_shower.png",
+  "cosmic-vortex-bg": "11_cosmic_vortex.png",
+  "distant-planets-bg": "12_distant_planets.png"
+};
 function zh() {
+  const { state: Zh } = Lt();
+  const Xh = Zh.equippedAccessories?.background;
+  const Qh = Xh && SpaceBgFileMap[Xh]
+    ? `url('/figma-assets/space_backgrounds_1080x1920/${SpaceBgFileMap[Xh]}')`
+    : "url('/figma-assets/space_backgrounds_1080x1920/11_cosmic_vortex.png')";
   return /* @__PURE__ */ R(
     "div",
     {
@@ -5266,7 +5289,13 @@ function zh() {
           "div",
           {
             className: "relative w-full max-w-[390px] flex flex-col",
-            style: { zIndex: 1 },
+            style: {
+              zIndex: 1,
+              backgroundImage: Qh,
+              backgroundSize: "390px auto",
+              backgroundRepeat: "repeat-y",
+              backgroundPosition: "top center"
+            },
             children: [
               /* @__PURE__ */ y(
                 "main",
@@ -10241,7 +10270,17 @@ const g0 = {
   { id: "aurora-bg", name: "오로라 배경", category: "background", price: 140, col: 2, row: 6, rarity: "epic" },
   { id: "space-bg", name: "우주 배경", category: "background", price: 120, col: 3, row: 6, rarity: "rare" },
   { id: "moon-bg", name: "달밤 배경", category: "background", price: 110, col: 5, row: 6, rarity: "rare" },
-  { id: "crystal-bg", name: "크리스탈 배경", category: "background", price: 160, col: 6, row: 6, rarity: "epic" }
+  { id: "crystal-bg", name: "크리스탈 배경", category: "background", price: 160, col: 6, row: 6, rarity: "epic" },
+  { id: "purple-galaxy-bg", name: "보라 은하 배경", category: "background", price: 140, col: 0, row: 6, rarity: "epic" },
+  { id: "cyan-nebula-bg", name: "시안 성운 배경", category: "background", price: 130, col: 1, row: 6, rarity: "rare" },
+  { id: "green-aurora-bg", name: "녹색 오로라 배경", category: "background", price: 140, col: 2, row: 6, rarity: "epic" },
+  { id: "red-mars-bg", name: "화성의 밤 배경", category: "background", price: 120, col: 3, row: 6, rarity: "rare" },
+  { id: "golden-star-bg", name: "황금 별밭 배경", category: "background", price: 150, col: 5, row: 6, rarity: "epic" },
+  { id: "pink-dream-bg", name: "핑크 드림 배경", category: "background", price: 130, col: 6, row: 6, rarity: "rare" },
+  { id: "blue-crystal-bg", name: "블루 크리스탈 배경", category: "background", price: 160, col: 0, row: 6, rarity: "legendary" },
+  { id: "meteor-shower-bg", name: "유성우 배경", category: "background", price: 170, col: 1, row: 6, rarity: "legendary" },
+  { id: "cosmic-vortex-bg", name: "코스믹 소용돌이 배경", category: "background", price: 180, col: 2, row: 6, rarity: "legendary" },
+  { id: "distant-planets-bg", name: "먼 행성 배경", category: "background", price: 160, col: 3, row: 6, rarity: "epic" }
 ], Pa = [
   "오늘도 수고했어! 🌟",
   "좋은 하루였어 😊",
@@ -10346,7 +10385,21 @@ const Si = M0(), L0 = F0(Si), k0 = {
     "star-band",
     "space-bg",
     "glow-ring",
-    "sprout"
+    "sprout",
+    "constellation-bg",
+    "aurora-bg",
+    "moon-bg",
+    "crystal-bg",
+    "purple-galaxy-bg",
+    "cyan-nebula-bg",
+    "green-aurora-bg",
+    "red-mars-bg",
+    "golden-star-bg",
+    "pink-dream-bg",
+    "blue-crystal-bg",
+    "meteor-shower-bg",
+    "cosmic-vortex-bg",
+    "distant-planets-bg"
   ],
   equippedAccessories: {
     hat: "crown",
@@ -10468,6 +10521,26 @@ function sn({
   style: n
 }) {
   if (!e) return null;
+  const Kh = SpaceBgFileMap[e];
+  if (Kh) {
+    return /* @__PURE__ */ y(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          width: t,
+          height: t,
+          backgroundImage: `url('/figma-assets/space_backgrounds_1080x1920/${Kh}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          borderRadius: "50%",
+          pointerEvents: "none",
+          ...n
+        }
+      }
+    );
+  }
   const r = rt.find((s) => s.id === e);
   if (!r) return null;
   const i = r.col === 0 ? 0 : r.col / (Ca - 1) * 100, o = r.row === 0 ? 0 : r.row / (Ta - 1) * 100;
@@ -10511,14 +10584,6 @@ function On({
         /* @__PURE__ */ y(
           sn,
           {
-            id: t.background,
-            size: n,
-            style: { top: 0, left: 0, zIndex: 0, opacity: 0.88 }
-          }
-        ),
-        /* @__PURE__ */ y(
-          sn,
-          {
             id: t.ring,
             size: s,
             style: {
@@ -10529,21 +10594,68 @@ function On({
             }
           }
         ),
-        /* @__PURE__ */ y(
-          "img",
+        i.id === "earth" ? /* @__PURE__ */ R(
+          "div",
           {
-            src: i.image,
-            alt: i.name,
             style: {
+              position: "relative",
               width: o,
               height: o,
-              imageRendering: "pixelated",
-              objectFit: "contain",
-              position: "relative",
-              zIndex: 2,
               flexShrink: 0,
+              zIndex: 2,
               animation: r ? "planetFloat 3.2s ease-in-out infinite" : void 0
-            }
+            },
+            children: [
+              /* @__PURE__ */ y("img", {
+                src: globalThis.__GLOBALS__.getAssetURL("earth_base.png"),
+                alt: "earth base",
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+              }),
+              /* @__PURE__ */ y("img", {
+                src: globalThis.__GLOBALS__.getAssetURL("earth_face_happy.png"),
+                alt: "earth face",
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+              }),
+              /* @__PURE__ */ y("img", {
+                src: globalThis.__GLOBALS__.getAssetURL("earth_effect_clouds.png"),
+                alt: "earth clouds",
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+              }),
+              /* @__PURE__ */ y("img", {
+                src: globalThis.__GLOBALS__.getAssetURL("earth_effect_sparkles.png"),
+                alt: "earth sparkles",
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+              })
+            ]
+          }
+        ) : /* @__PURE__ */ R(
+          "div",
+          {
+            style: {
+              position: "relative",
+              width: o,
+              height: o,
+              flexShrink: 0,
+              zIndex: 2,
+              animation: r ? "planetFloat 3.2s ease-in-out infinite" : void 0
+            },
+            children: [
+              /* @__PURE__ */ y("img", {
+                src: globalThis.__GLOBALS__.getAssetURL(i.id + "_base.png"),
+                alt: i.id + " base",
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+              }),
+              /* @__PURE__ */ y("img", {
+                src: globalThis.__GLOBALS__.getAssetURL(i.id + "_effect_glow.png"),
+                alt: i.id + " glow",
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated", mixBlendMode: "screen", opacity: 0.85 }
+              }),
+              /* @__PURE__ */ y("img", {
+                src: globalThis.__GLOBALS__.getAssetURL("earth_face_happy.png"),
+                alt: "face",
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+              })
+            ]
           }
         ),
         /* @__PURE__ */ y(
@@ -11218,7 +11330,7 @@ function _0() {
         children: [
           /* @__PURE__ */ y("div", { style: { fontFamily: "'Press Start 2P'", fontSize: 7, color: "#7B7BCC", marginBottom: 16 }, children: "— 태양계 컬렉션 —" }),
           /* @__PURE__ */ y("div", { className: "grid grid-cols-3 gap-4", children: Ke.map((i, o) => {
-            const s = r.has(o), a = o === e.currentPlanetIndex, l = !s && !a;
+            const s = r.has(o), a = o === e.currentPlanetIndex, l = false;
             return /* @__PURE__ */ R(
               he.div,
               {
@@ -11799,7 +11911,7 @@ function G0() {
       "div",
       {
         className: "flex flex-col items-center py-5",
-        style: { background: "radial-gradient(ellipse at center, #0D1035 0%, #060714 100%)" },
+        style: { background: "transparent" },
         children: [
           /* @__PURE__ */ y(
             he.div,

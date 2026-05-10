@@ -6,7 +6,7 @@ dist/
 vite.config.js
 vite.config.d.ts
 
-/.DS_Store
+.DS_Store
 /*.png
 /binary_files.json
 /binary_manifest.json
