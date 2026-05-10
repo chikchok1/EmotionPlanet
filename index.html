@@ -10,6 +10,20 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/figma-original/index.css" />
     <title>MD 파일 기반 학습</title>
+    <style>
+      /* 행성 베이스 이미지 픽셀아트 렌더링 제거 → 우리 PNG가 선명하게 보임 */
+      img[alt="지구"],
+      img[alt="화성"],
+      img[alt="수성"],
+      img[alt="금성"],
+      img[alt="목성"],
+      img[alt="토성"],
+      img[alt="천왕성"],
+      img[alt="해왕성"],
+      img[alt="태양"] {
+        image-rendering: auto !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

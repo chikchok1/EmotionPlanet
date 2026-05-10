@@ -3,44 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layered Planets</title>
+    <title>Emotion Planets</title>
     <style>
         body {
             background-color: #0d1128;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 40px 20px;
             color: white;
             font-family: sans-serif;
+            box-sizing: border-box;
         }
 
-        .planets-wrapper {
-            display: flex;
-            gap: 80px;
-            align-items: center;
+        h2 {
+            margin-bottom: 48px;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        .planets-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px 20px;
+            max-width: 900px;
+            width: 100%;
+            justify-items: center;
         }
 
         .planet-card {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
         .planet-card span {
-            font-size: 14px;
-            opacity: 0.6;
-            letter-spacing: 2px;
+            font-size: 12px;
+            opacity: 0.5;
+            letter-spacing: 3px;
             text-transform: uppercase;
         }
 
         .planet-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 220px;
+            height: 220px;
         }
 
         .planet-layer {
@@ -54,57 +64,116 @@
 
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
         }
         @keyframes sparkle {
             0%, 100% { opacity: 0.5; transform: scale(0.9); }
             50% { opacity: 1; transform: scale(1.1); }
         }
 
-        .layer-base     { animation: float 4s ease-in-out infinite; }
-        .layer-face     { animation: float 4s ease-in-out infinite; }
-        .layer-clouds   { animation: float 4s ease-in-out infinite; }
-        .layer-sparkles { animation: sparkle 2s ease-in-out infinite; }
+        .layer-glow {
+            mix-blend-mode: screen;
+            opacity: 0.85;
+        }
 
-        /* 수성은 float 살짝 다르게 */
-        .mercury .layer-base { animation: float 4.5s ease-in-out infinite; }
-        .mercury .layer-face { animation: float 4.5s ease-in-out infinite; }
+        .planet-container { animation: none; }
+        .layer-base, .layer-face, .layer-clouds, .layer-sparkles { animation: none; }
     </style>
 </head>
 <body>
-    <h2 style="margin-bottom: 48px;">레이어 조합된 행성들</h2>
+    <h2>🌌 Emotion Planets</h2>
 
-    <div class="planets-wrapper">
+    <div class="planets-grid">
 
-        <!-- 지구 -->
-        <div class="planet-card">
-            <div class="planet-container">
-                <img src="figma-assets/earth_base.png"            class="planet-layer layer-base"     alt="지구 베이스">
-                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
-                <img src="figma-assets/earth_effect_clouds.png"   class="planet-layer layer-clouds"   alt="구름">
-                <img src="figma-assets/earth_effect_sparkles.png" class="planet-layer layer-sparkles" alt="반짝이">
-            </div>
-            <span>Earth</span>
-        </div>
-
-        <!-- 수성 -->
+        <!-- 수성 Mercury -->
         <div class="planet-card mercury">
             <div class="planet-container">
-                <img src="figma-assets/mercury_base.png"          class="planet-layer layer-base"     alt="수성 베이스">
+                <img src="figma-assets/mercury_base.png"          class="planet-layer layer-base"     alt="수성">
+                <img src="figma-assets/mercury_effect_glow.png"   class="planet-layer layer-glow"     alt="글로우">
                 <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
-                <img src="figma-assets/earth_effect_sparkles.png" class="planet-layer layer-sparkles" alt="반짝이">
             </div>
             <span>Mercury</span>
         </div>
 
-        <!-- 금성 -->
-        <div class="planet-card mercury">
+        <!-- 금성 Venus -->
+        <div class="planet-card venus">
             <div class="planet-container">
-                <img src="figma-assets/venus_base.png"          class="planet-layer layer-base"     alt="수성 베이스">
+                <img src="figma-assets/venus_base.png"            class="planet-layer layer-base"     alt="금성">
+                <img src="figma-assets/venus_effect_glow.png"     class="planet-layer layer-glow"     alt="글로우">
                 <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
-                <img src="figma-assets/earth_effect_sparkles.png" class="planet-layer layer-sparkles" alt="반짝이">
             </div>
             <span>Venus</span>
+        </div>
+
+        <!-- 지구 Earth -->
+        <div class="planet-card earth">
+            <div class="planet-container">
+                <img src="figma-assets/earth_base.png"            class="planet-layer layer-base"     alt="지구">
+                <img src="figma-assets/earth_effect_clouds.png"   class="planet-layer layer-clouds"   alt="구름">
+                <img src="figma-assets/earth_effect_sparkles.png" class="planet-layer layer-sparkles" alt="반짝이">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+            </div>
+            <span>Earth</span>
+        </div>
+
+        <!-- 화성 Mars -->
+        <div class="planet-card mars">
+            <div class="planet-container">
+                <img src="figma-assets/mars_base.png"             class="planet-layer layer-base"     alt="화성">
+                <img src="figma-assets/mars_effect_glow.png"      class="planet-layer layer-glow"     alt="글로우">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+            </div>
+            <span>Mars</span>
+        </div>
+
+        <!-- 목성 Jupiter -->
+        <div class="planet-card jupiter">
+            <div class="planet-container">
+                <img src="figma-assets/jupiter_base.png"          class="planet-layer layer-base"     alt="목성">
+                <img src="figma-assets/jupiter_effect_glow.png"   class="planet-layer layer-glow"     alt="글로우">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+            </div>
+            <span>Jupiter</span>
+        </div>
+
+        <!-- 토성 Saturn -->
+        <div class="planet-card saturn">
+            <div class="planet-container">
+                <img src="figma-assets/saturn_base.png"           class="planet-layer layer-base"     alt="토성">
+                <img src="figma-assets/saturn_effect_glow.png"    class="planet-layer layer-glow"     alt="글로우">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+            </div>
+            <span>Saturn</span>
+        </div>
+
+        <!-- 천왕성 Uranus -->
+        <div class="planet-card uranus">
+            <div class="planet-container">
+                <img src="figma-assets/uranus_base.png"           class="planet-layer layer-base"     alt="천왕성">
+                <img src="figma-assets/uranus_effect_glow.png"    class="planet-layer layer-glow"     alt="글로우">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+            </div>
+            <span>Uranus</span>
+        </div>
+
+        <!-- 해왕성 Neptune -->
+        <div class="planet-card neptune">
+            <div class="planet-container">
+                <img src="figma-assets/neptune_base.png"          class="planet-layer layer-base"     alt="해왕성">
+                <img src="figma-assets/neptune_effect_glow.png"   class="planet-layer layer-glow"     alt="글로우">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+            </div>
+            <span>Neptune</span>
+        </div>
+
+        <!-- 명왕성 Pluto -->
+        <div class="planet-card pluto">
+            <div class="planet-container">
+                <img src="figma-assets/pluto_base.png"            class="planet-layer layer-base"     alt="명왕성">
+                <img src="figma-assets/pluto_effect_glow.png"     class="planet-layer layer-glow"     alt="글로우">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+            </div>
+            <span>Pluto</span>
         </div>
 
     </div>
