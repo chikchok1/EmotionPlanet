@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layered Planets</title>
+    <style>
+        body {
+            background-color: #0d1128;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+            font-family: sans-serif;
+        }
+
+        .planets-wrapper {
+            display: flex;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .planet-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .planet-card span {
+            font-size: 14px;
+            opacity: 0.6;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .planet-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .planet-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.5; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .layer-base     { animation: float 4s ease-in-out infinite; }
+        .layer-face     { animation: float 4s ease-in-out infinite; }
+        .layer-clouds   { animation: float 4s ease-in-out infinite; }
+        .layer-sparkles { animation: sparkle 2s ease-in-out infinite; }
+
+        /* 수성은 float 살짝 다르게 */
+        .mercury .layer-base { animation: float 4.5s ease-in-out infinite; }
+        .mercury .layer-face { animation: float 4.5s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+    <h2 style="margin-bottom: 48px;">레이어 조합된 행성들</h2>
+
+    <div class="planets-wrapper">
+
+        <!-- 지구 -->
+        <div class="planet-card">
+            <div class="planet-container">
+                <img src="figma-assets/earth_base.png"            class="planet-layer layer-base"     alt="지구 베이스">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+                <img src="figma-assets/earth_effect_clouds.png"   class="planet-layer layer-clouds"   alt="구름">
+                <img src="figma-assets/earth_effect_sparkles.png" class="planet-layer layer-sparkles" alt="반짝이">
+            </div>
+            <span>Earth</span>
+        </div>
+
+        <!-- 수성 -->
+        <div class="planet-card mercury">
+            <div class="planet-container">
+                <img src="figma-assets/mercury_base.png"          class="planet-layer layer-base"     alt="수성 베이스">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+                <img src="figma-assets/earth_effect_sparkles.png" class="planet-layer layer-sparkles" alt="반짝이">
+            </div>
+            <span>Mercury</span>
+        </div>
+
+        <!-- 금성 -->
+        <div class="planet-card mercury">
+            <div class="planet-container">
+                <img src="figma-assets/venus_base.png"          class="planet-layer layer-base"     alt="수성 베이스">
+                <img src="figma-assets/earth_face_happy.png"      class="planet-layer layer-face"     alt="표정">
+                <img src="figma-assets/earth_effect_sparkles.png" class="planet-layer layer-sparkles" alt="반짝이">
+            </div>
+            <span>Venus</span>
+        </div>
+
+    </div>
+</body>
+</html>

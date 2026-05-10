@@ -12,7 +12,8 @@ BACKUP_DIR = ROOT / "public" / "figma-assets-original"
 
 def is_checker_pixel(pixel: tuple[int, int, int]) -> bool:
     r, g, b = pixel
-    return min(r, g, b) >= 218 and max(r, g, b) - min(r, g, b) <= 28
+    # 체커보드 흰색(255,255,255)과 회색(~192,192,192) 모두 감지하도록 threshold 낮춤
+    return min(r, g, b) >= 150 and max(r, g, b) - min(r, g, b) <= 40
 
 
 def transparentize_background(path: Path) -> int:
