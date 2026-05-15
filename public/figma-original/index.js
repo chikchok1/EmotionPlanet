@@ -10160,14 +10160,14 @@ const g0 = {
     description: "가장 멀리 있는 깊은 파란 행성"
   },
   {
-    id: "sun",
-    name: "태양",
+    id: "pluto",
+    name: "명왕성",
     image: A0,
-    color: "#FFD040",
-    glowColor: "#FF9000",
-    auraColor: "#1A1000",
+    color: "#D8C4B0",
+    glowColor: "#9A7B68",
+    auraColor: "#181018",
     recordsNeeded: 30,
-    description: "모든 것을 밝히는 빛나는 별"
+    description: "작지만 차분하게 빛나는 외곽 행성"
   }
 ], Se = [
   {
@@ -10598,22 +10598,22 @@ function On({
               /* @__PURE__ */ y("img", {
                 src: globalThis.__GLOBALS__.getAssetURL("earth_base.png"),
                 alt: "earth base",
-                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "auto" }
               }),
               /* @__PURE__ */ y("img", {
                 src: globalThis.__GLOBALS__.getAssetURL("earth_face_happy.png"),
                 alt: "earth face",
-                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "auto" }
               }),
               /* @__PURE__ */ y("img", {
                 src: globalThis.__GLOBALS__.getAssetURL("earth_effect_clouds.png"),
                 alt: "earth clouds",
-                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "auto" }
               }),
               /* @__PURE__ */ y("img", {
                 src: globalThis.__GLOBALS__.getAssetURL("earth_effect_sparkles.png"),
                 alt: "earth sparkles",
-                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "auto" }
               })
             ]
           }
@@ -10632,17 +10632,17 @@ function On({
               /* @__PURE__ */ y("img", {
                 src: globalThis.__GLOBALS__.getAssetURL(i.id + "_base.png"),
                 alt: i.id + " base",
-                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "auto" }
               }),
               /* @__PURE__ */ y("img", {
                 src: globalThis.__GLOBALS__.getAssetURL(i.id + "_effect_glow.png"),
                 alt: i.id + " glow",
-                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated", mixBlendMode: "screen", opacity: 0.85 }
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "auto", mixBlendMode: "screen", opacity: 0.85 }
               }),
               /* @__PURE__ */ y("img", {
                 src: globalThis.__GLOBALS__.getAssetURL("earth_face_happy.png"),
                 alt: "face",
-                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "pixelated" }
+                style: { position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "contain", imageRendering: "auto" }
               })
             ]
           }

@@ -36,8 +36,8 @@ const PLANET_IMAGE_MAP: Record<string, string> = {
   "8483f02a-32f0-4329-953f-691cb00c1d47.png": "planet_image/Uranus.png",
   // neptune
   "472a5467-3bce-465b-bfb1-857cbcec71d8.png": "planet_image/neptune.png",
-  // sun - planet_image에 없으므로 기존 파일 유지
-  // "d650f03c-c4c1-4e63-a050-e535f7dfbed3.png": 태양 이미지 없음
+  // pluto
+  "d650f03c-c4c1-4e63-a050-e535f7dfbed3.png": "planet_image/Pluto.png",
 };
 
 globals.__GLOBALS__ = {
