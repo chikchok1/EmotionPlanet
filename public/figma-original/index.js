@@ -10477,15 +10477,23 @@ function B0({ children: e }) {
       ownedAccessories: [...d.ownedAccessories, u]
     })), !0);
   }, [t]), l = we((u, f) => {
-    n((d) => ({
-      ...d,
-      equippedAccessories: { ...d.equippedAccessories, [f]: u }
-    }));
+    n((d) => {
+      const A = d.completedPlanets.some((p) => p.planetIndex === d.currentPlanetIndex);
+      return {
+        ...d,
+        equippedAccessories: A ? d.equippedAccessories : { ...d.equippedAccessories, [f]: u },
+        completedPlanets: d.completedPlanets.map((p) => p.planetIndex === d.currentPlanetIndex ? { ...p, equippedAccessories: { ...p.equippedAccessories, [f]: u } } : p)
+      };
+    });
   }, []), c = we((u) => {
-    n((f) => ({
-      ...f,
-      equippedAccessories: { ...f.equippedAccessories, [u]: null }
-    }));
+    n((f) => {
+      const d = f.completedPlanets.some((p) => p.planetIndex === f.currentPlanetIndex);
+      return {
+        ...f,
+        equippedAccessories: d ? f.equippedAccessories : { ...f.equippedAccessories, [u]: null },
+        completedPlanets: f.completedPlanets.map((p) => p.planetIndex === f.currentPlanetIndex ? { ...p, equippedAccessories: { ...p.equippedAccessories, [u]: null } } : p)
+      };
+    });
   }, []);
   return /* @__PURE__ */ y(Qc.Provider, { value: {
     state: t,
@@ -10493,6 +10501,7 @@ function B0({ children: e }) {
     purchaseAccessory: a,
     equipAccessory: l,
     unequipAccessory: c,
+    selectPlanet: (u) => { n((f) => ({ ...f, currentPlanetIndex: u })); },
     hasRecordedToday: r,
     getTodayRecord: i,
     getDominantEmotion: o
@@ -10709,7 +10718,7 @@ function O0() {
   function C() {
     o && (t(o, a), d(!0), u("done"));
   }
-  const M = Se.find((T) => T.id === (o || p?.emotion));
+  const M = Se.find((T) => T.id === (o || p?.emotion)), T = e.completedPlanets.find((F) => F.planetIndex === e.currentPlanetIndex), F = T?.equippedAccessories ?? e.equippedAccessories;
   return /* @__PURE__ */ R("div", { className: "flex flex-col min-h-full px-4 pt-4 pb-2 select-none", children: [
     /* @__PURE__ */ R("div", { className: "flex justify-between items-center mb-3", children: [
       /* @__PURE__ */ y("div", { style: { fontFamily: "'Press Start 2P'", fontSize: 8, color: "#7B7BCC" }, children: V0() }),
@@ -10738,7 +10747,7 @@ function O0() {
             On,
             {
               planetIndex: e.currentPlanetIndex,
-              equipped: e.equippedAccessories,
+              equipped: F,
               size: 180
             }
           )
@@ -11005,7 +11014,7 @@ function z0() {
   a.forEach((d) => {
     l[d.emotion] = (l[d.emotion] || 0) + 1;
   });
-  const c = t(a), u = Se.find((d) => d.id === c), f = ["hat", "shoes", "face", "ring", "background"];
+  const c = t(a), u = Se.find((d) => d.id === c), f = ["hat", "shoes", "face", "ring", "background"], d = e.completedPlanets.find((h) => h.planetIndex === e.currentPlanetIndex), h = d?.equippedAccessories ?? e.equippedAccessories;
   return /* @__PURE__ */ R("div", { className: "flex flex-col min-h-full px-4 pt-4", children: [
     /* @__PURE__ */ R("div", { className: "flex items-center justify-between mb-4", children: [
       /* @__PURE__ */ R("div", { children: [
@@ -11038,7 +11047,7 @@ function z0() {
           On,
           {
             planetIndex: e.currentPlanetIndex,
-            equipped: e.equippedAccessories,
+            equipped: h,
             size: 200,
             animate: !0
           }
@@ -11156,7 +11165,7 @@ function z0() {
             I0,
             {
               category: d,
-              accessoryId: e.equippedAccessories[d],
+              accessoryId: h[d],
               onClick: () => n("/customize")
             },
             d
@@ -11193,7 +11202,7 @@ function j0({
   planetIndex: e,
   onClose: t
 }) {
-  const { state: n, getDominantEmotion: r } = Lt(), i = Ke[e], o = n.completedPlanets.find((h) => h.planetIndex === e), s = e === n.currentPlanetIndex, a = e * 30, l = o ? n.records.slice(a, a + 30) : s ? n.records.slice(a) : [], c = {};
+  const { state: n, getDominantEmotion: r, selectPlanet: q } = Lt(), i = Ke[e], o = n.completedPlanets.find((h) => h.planetIndex === e), s = e === n.currentPlanetIndex, a = e * 30, l = o ? n.records.slice(a, a + 30) : s ? n.records.slice(a) : [], c = {};
   l.forEach((h) => {
     c[h.emotion] = (c[h.emotion] || 0) + 1;
   });
@@ -11268,7 +11277,23 @@ function j0({
                   "일 기록"
                 ] })
               ] })
-            ] })
+            ] }),
+            !s && /* @__PURE__ */ y("button", {
+              onClick: () => { q(e); t(); },
+              style: {
+                marginTop: 16,
+                width: "100%",
+                padding: "10px",
+                background: "#7C5CFC",
+                border: "none",
+                borderRadius: 8,
+                color: "#fff",
+                fontFamily: "'Press Start 2P'",
+                fontSize: 10,
+                cursor: "pointer"
+              },
+              children: "이 행성으로 변경 ✨"
+            })
           ]
         }
       )
@@ -11351,7 +11376,7 @@ function _0() {
                           On,
                           {
                             planetIndex: o,
-                            equipped: s ? e.completedPlanets.find((c) => c.planetIndex === o)?.equippedAccessories : e.equippedAccessories,
+                            equipped: e.completedPlanets.find((c) => c.planetIndex === o)?.equippedAccessories ?? (o === e.currentPlanetIndex ? e.equippedAccessories : { hat: null, shoes: null, face: null, ring: null, background: null }),
                             size: 80
                           }
                         ),
@@ -11760,6 +11785,7 @@ function H0({
 }
 function K0() {
   const { state: e, purchaseAccessory: t, equipAccessory: n, unequipAccessory: r } = Lt(), [i, o] = te("hat"), [s, a] = te(null);
+  const p = e.completedPlanets.find((x) => x.planetIndex === e.currentPlanetIndex), x = p?.equippedAccessories ?? e.equippedAccessories;
   function l(d) {
     a(d), setTimeout(() => a(null), 2e3);
   }
@@ -11771,7 +11797,7 @@ function K0() {
       l("포인트가 부족해요 😢");
   }
   function u(d, h) {
-    if (e.equippedAccessories[h] === d)
+    if (x[h] === d)
       r(h), l("장착 해제됨");
     else {
       n(d, h);
@@ -11851,7 +11877,7 @@ function K0() {
       {
         acc: d,
         owned: e.ownedAccessories.includes(d.id),
-        equipped: e.equippedAccessories[d.category] === d.id,
+        equipped: x[d.category] === d.id,
         points: e.points,
         onBuy: () => c(d.id),
         onEquip: () => u(d.id, d.category)
@@ -11882,7 +11908,7 @@ function K0() {
 }
 const Fa = ["hat", "shoes", "face", "ring", "background"];
 function G0() {
-  const { state: e, equipAccessory: t, unequipAccessory: n } = Lt(), r = vr(), [i, o] = te("hat"), [s, a] = te(null), l = e.ownedAccessories, c = e.equippedAccessories, u = rt.filter(
+  const { state: e, equipAccessory: t, unequipAccessory: n } = Lt(), r = vr(), [i, o] = te("hat"), [s, a] = te(null), l = e.ownedAccessories, c = e.completedPlanets.find((d) => d.planetIndex === e.currentPlanetIndex)?.equippedAccessories ?? e.equippedAccessories, u = rt.filter(
     (d) => d.category === i && l.includes(d.id)
   );
   function f(d, h) {
