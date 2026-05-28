@@ -20,7 +20,9 @@ export function AppShell({ route, navigate, children }: AppShellProps) {
       <main
         className="app-frame"
         style={{
-          backgroundImage: `linear-gradient(rgba(6,7,20,0.12), rgba(6,7,20,0.2)), url('${backgroundUrl}')`
+          backgroundImage: backgroundUrl
+            ? `linear-gradient(rgba(4,5,16,0.08), rgba(4,5,16,0.18)), url('${backgroundUrl}')`
+            : undefined
         }}
       >
         <div className="page-content">{children}</div>

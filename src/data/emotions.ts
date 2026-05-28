@@ -1,6 +1,7 @@
 import type { Emotion, EmotionId } from "../types";
 
 const face = (filename: string) => `/figma-assets/planet_face_expression_layers_clean/${filename}`;
+const planet = (filename: string) => `/emotion/${filename}`;
 
 export const EMOTIONS: Emotion[] = [
   {
@@ -12,7 +13,8 @@ export const EMOTIONS: Emotion[] = [
     borderColor: "#F5C842",
     points: 30,
     description: "행복하고 즐거운 하루!",
-    faceImage: face("01_happy_smile.png")
+    faceImage: face("01_happy_smile.png"),
+    planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_29 (1).png"),
   },
   {
     id: "calm",
@@ -23,7 +25,8 @@ export const EMOTIONS: Emotion[] = [
     borderColor: "#10B981",
     points: 20,
     description: "차분하고 평화로운 하루",
-    faceImage: face("03_calm_closed_eye_smile.png")
+    faceImage: face("03_calm_closed_eye_smile.png"),
+    planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_29 (2).png"),
   },
   {
     id: "excited",
@@ -34,7 +37,8 @@ export const EMOTIONS: Emotion[] = [
     borderColor: "#9060E0",
     points: 30,
     description: "두근두근 설레는 하루!",
-    faceImage: face("02_big_excited_smile.png")
+    faceImage: face("02_big_excited_smile.png"),
+    planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_29 (3).png"),
   },
   {
     id: "tired",
@@ -45,7 +49,8 @@ export const EMOTIONS: Emotion[] = [
     borderColor: "#6B7280",
     points: 15,
     description: "힘들지만 수고했어요",
-    faceImage: face("09_tired.png")
+    faceImage: face("09_tired.png"),
+    planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_29 (4).png"),
   },
   {
     id: "sad",
@@ -56,7 +61,8 @@ export const EMOTIONS: Emotion[] = [
     borderColor: "#3B82F6",
     points: 15,
     description: "괜찮아요, 내일은 더 나을 거예요",
-    faceImage: face("05_sad_crying.png")
+    faceImage: face("05_sad_crying.png"),
+    planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_30 (5).png"),
   },
   {
     id: "angry",
@@ -67,7 +73,8 @@ export const EMOTIONS: Emotion[] = [
     borderColor: "#EF4444",
     points: 20,
     description: "화가 났군요, 잠깐 쉬어가요",
-    faceImage: face("06_angry.png")
+    faceImage: face("06_angry.png"),
+    planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_30 (6).png"),
   }
 ];
 

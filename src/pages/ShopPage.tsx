@@ -46,8 +46,8 @@ export function ShopPage() {
           <p>감정 기록으로 포인트를 모아요</p>
         </div>
         <div className="point-pill">
-          <span>★</span>
-          <strong>{state.points.toLocaleString()}</strong>
+          <span>⭐</span>
+          {state.points.toLocaleString()}pt
         </div>
       </header>
 
@@ -55,9 +55,25 @@ export function ShopPage() {
         <span className="pixel-label">포인트 획득</span>
         <div className="point-guide">
           {EMOTIONS.map((emotion) => (
-            <span key={emotion.id}>
-              {emotion.emoji} +{emotion.points}
-            </span>
+            <div className="point-guide-item" key={emotion.id}>
+              <div className="point-guide-planet">
+                <img
+                  src={emotion.planetImage}
+                  alt={emotion.name}
+                  className="point-guide-planet-img"
+                  onError={(e) => {
+                    const t = e.currentTarget as HTMLImageElement;
+                    t.style.display = "none";
+                    const fb = t.nextElementSibling as HTMLElement;
+                    if (fb) fb.style.display = "flex";
+                  }}
+                />
+                <span className="point-guide-planet-fallback" style={{ display: "none" }}>
+                  {emotion.emoji}
+                </span>
+              </div>
+              <span style={{ color: emotion.color }}>+{emotion.points}</span>
+            </div>
           ))}
         </div>
       </section>

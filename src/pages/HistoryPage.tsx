@@ -21,6 +21,7 @@ export function HistoryPage() {
         <StatCard label="연속 기록" value={state.currentStreak} />
       </section>
 
+      {/* ── 감정 분포 ── */}
       <section className="panel">
         <div className="section-heading">
           <h2>감정 분포</h2>
@@ -32,9 +33,26 @@ export function HistoryPage() {
             const ratio = state.records.length ? Math.round((count / state.records.length) * 100) : 0;
             return (
               <div className="emotion-bar-row" key={emotion.id}>
-                <span className="emotion-bar-label">
-                  {emotion.emoji} {emotion.name}
-                </span>
+                {/* 이모지 → 행성 이미지 */}
+                <div className="emotion-bar-label">
+                  <div className="history-bar-planet">
+                    <img
+                      src={emotion.planetImage}
+                      alt={emotion.name}
+                      className="history-bar-planet-img"
+                      onError={(e) => {
+                        const t = e.currentTarget as HTMLImageElement;
+                        t.style.display = "none";
+                        const fb = t.nextElementSibling as HTMLElement;
+                        if (fb) fb.style.display = "flex";
+                      }}
+                    />
+                    <span className="history-bar-planet-fallback" style={{ display: "none" }}>
+                      {emotion.emoji}
+                    </span>
+                  </div>
+                  <span style={{ color: "var(--t1)" }}>{emotion.name}</span>
+                </div>
                 <div className="emotion-bar-track">
                   <div
                     className="emotion-bar-fill"
@@ -48,6 +66,7 @@ export function HistoryPage() {
         </div>
       </section>
 
+      {/* ── 최근 기록 ── */}
       <section className="panel">
         <div className="section-heading">
           <h2>최근 기록</h2>
@@ -60,9 +79,25 @@ export function HistoryPage() {
               <article
                 className="record-item"
                 key={record.id}
-                style={{ background: emotion.bgColor, borderColor: `${emotion.borderColor}55` }}
+                style={{ "--record-accent": emotion.color } as React.CSSProperties}
               >
-                <span>{emotion.emoji}</span>
+                {/* 이모지 → 행성 이미지 썸네일 */}
+                <div className="record-planet-thumb">
+                  <img
+                    src={emotion.planetImage}
+                    alt={emotion.name}
+                    className="record-planet-img"
+                    onError={(e) => {
+                      const t = e.currentTarget as HTMLImageElement;
+                      t.style.display = "none";
+                      const fb = t.nextElementSibling as HTMLElement;
+                      if (fb) fb.style.display = "flex";
+                    }}
+                  />
+                  <span className="record-planet-fallback" style={{ display: "none" }}>
+                    {emotion.emoji}
+                  </span>
+                </div>
                 <div>
                   <strong style={{ color: emotion.color }}>{emotion.name}</strong>
                   {record.comment ? <p>{record.comment}</p> : null}
