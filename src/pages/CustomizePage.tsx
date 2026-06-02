@@ -11,11 +11,13 @@ type CustomizePageProps = {
 };
 
 export function CustomizePage({ navigate }: CustomizePageProps) {
-  const { state, equipAccessory, unequipAccessory, getDominantEmotion, getPlanetRecords } = useEmotionPlanet();
+  const { state, equipAccessory, unequipAccessory, equipAccessoryForPlanet, unequipAccessoryForPlanet, getEquippedForPlanet, getDominantEmotion, getPlanetRecords, viewingPlanetIndex } = useEmotionPlanet();
   const [category, setCategory] = useState<AccessoryCategory>("hat");
   const [toast, setToast] = useState<string | null>(null);
-  const planet = PLANETS[state.currentPlanetIndex];
-  const emotion = getDominantEmotion(getPlanetRecords(state.currentPlanetIndex));
+  const isViewingCurrent = viewingPlanetIndex === state.currentPlanetIndex;
+  const planet = PLANETS[viewingPlanetIndex];
+  const emotion = getDominantEmotion(getPlanetRecords(viewingPlanetIndex));
+  const equippedAccessories = getEquippedForPlanet(viewingPlanetIndex);
   const ownedItems = ACCESSORIES.filter(
     (item) => item.category === category && state.ownedAccessories.includes(item.id)
   );
@@ -26,14 +28,23 @@ export function CustomizePage({ navigate }: CustomizePageProps) {
   };
 
   const toggleItem = (item: Accessory) => {
-    if (state.equippedAccessories[item.category] === item.id) {
-      unequipAccessory(item.category);
-      showToast("해제됨");
-      return;
+    if (isViewingCurrent) {
+      if (state.equippedAccessories[item.category] === item.id) {
+        unequipAccessory(item.category);
+        showToast("해제됨");
+      } else {
+        equipAccessory(item.id, item.category);
+        showToast(`${item.name} 장착`);
+      }
+    } else {
+      if (equippedAccessories[item.category] === item.id) {
+        unequipAccessoryForPlanet(viewingPlanetIndex, item.category);
+        showToast("해제됨");
+      } else {
+        equipAccessoryForPlanet(viewingPlanetIndex, item.id, item.category);
+        showToast(`${item.name} 장착`);
+      }
     }
-
-    equipAccessory(item.id, item.category);
-    showToast(`${item.name} 장착`);
   };
 
   return (
@@ -46,7 +57,12 @@ export function CustomizePage({ navigate }: CustomizePageProps) {
       </header>
 
       <section className="customize-preview">
-        <PlanetAvatar planet={planet} emotion={emotion} equipped={state.equippedAccessories} size={190} animate />
+        <PlanetAvatar planet={planet} emotion={emotion} equipped={equippedAccessories} size={190} animate />
+        {!isViewingCurrent && (
+          <p style={{ fontSize: "0.78rem", opacity: 0.6, marginTop: "0.3rem", textAlign: "center" }}>
+            🔍 {planet.name} 행성 꾸미는 중
+          </p>
+        )}
         <div className="slot-row compact">
           {ACCESSORY_CATEGORIES.map((item) => (
             <button
@@ -56,8 +72,8 @@ export function CustomizePage({ navigate }: CustomizePageProps) {
               onClick={() => setCategory(item)}
             >
               <div className="accessory-slot-icon filled">
-                <AccessorySprite id={state.equippedAccessories[item]} size={30} />
-                {!state.equippedAccessories[item] ? <span>+</span> : null}
+                <AccessorySprite id={equippedAccessories[item]} size={30} />
+                {!equippedAccessories[item] ? <span>+</span> : null}
               </div>
               <span>{CATEGORY_LABELS[item]}</span>
             </button>
@@ -89,7 +105,7 @@ export function CustomizePage({ navigate }: CustomizePageProps) {
           </div>
         ) : (
           ownedItems.map((item) => {
-            const equipped = state.equippedAccessories[item.category] === item.id;
+            const equipped = equippedAccessories[item.category] === item.id;
             const rarityColor = RARITY_COLORS[item.rarity];
             return (
               <button

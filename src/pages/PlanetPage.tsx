@@ -13,16 +13,48 @@ type PlanetPageProps = {
 };
 
 export function PlanetPage({ navigate }: PlanetPageProps) {
-  const { state, getDominantEmotion, getPlanetRecords } = useEmotionPlanet();
-  const planet = PLANETS[state.currentPlanetIndex];
-  const planetRecords = getPlanetRecords(state.currentPlanetIndex);
+  const { state, getDominantEmotion, getPlanetRecords, viewingPlanetIndex, setViewingPlanet } = useEmotionPlanet();
+  const planet = PLANETS[viewingPlanetIndex];
+  const isViewingCurrent = viewingPlanetIndex === state.currentPlanetIndex;
+  const completedPlanet = state.completedPlanets.find((p) => p.planetIndex === viewingPlanetIndex);
+  const planetRecords = getPlanetRecords(viewingPlanetIndex);
   const dominantEmotion = getDominantEmotion(planetRecords);
   const dominant = EMOTION_BY_ID[dominantEmotion];
-  const stage = getCurrentStage(state.currentPlanetRecords);
+  const stage = getCurrentStage(isViewingCurrent ? state.currentPlanetRecords : planet.recordsNeeded);
   const emotionSummary = getEmotionSummary(planetRecords);
+  const equippedToShow = isViewingCurrent ? state.equippedAccessories : (completedPlanet?.equippedAccessories ?? state.equippedAccessories);
+  const recordCountToShow = isViewingCurrent ? state.currentPlanetRecords : (completedPlanet?.recordCount ?? 0);
 
   return (
     <div className="screen-stack planet-screen">
+      {/* ── 이전 행성 보는 중일 때 배너 ── */}
+      {!isViewingCurrent && (
+        <div
+          style={{
+            background: "rgba(124,92,252,0.15)",
+            border: "1px solid rgba(124,92,252,0.4)",
+            borderRadius: "0.75rem",
+            padding: "0.6rem 1rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.5rem",
+            fontSize: "0.85rem",
+            marginBottom: "0.5rem",
+          }}
+        >
+          <span style={{ opacity: 0.85 }}>🔍 {planet.name} 행성 보는 중</span>
+          <button
+            type="button"
+            className="mini-button"
+            onClick={() => {
+              setViewingPlanet(state.currentPlanetIndex);
+            }}
+          >
+            현재 행성으로
+          </button>
+        </div>
+      )}
       {/* ── 상단 바 ── */}
       <header className="top-bar">
         <div>
@@ -50,14 +82,14 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
         <PlanetAvatar
           planet={planet}
           emotion={dominantEmotion}
-          equipped={state.equippedAccessories}
+          equipped={equippedToShow}
           size={210}
           animate
         />
       </section>
 
       {/* ── 성장 진행도 ── */}
-      <PlanetProgress planet={planet} current={state.currentPlanetRecords} />
+      <PlanetProgress planet={planet} current={recordCountToShow} />
 
       {/* ── 대표 감정 ── */}
       <section className="panel">
@@ -133,7 +165,7 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
             <AccessorySlot
               key={category}
               category={category}
-              accessoryId={state.equippedAccessories[category]}
+              accessoryId={equippedToShow[category]}
               onClick={() => navigate("/customize")}
             />
           ))}
@@ -189,7 +221,7 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
 function AccessorySlot({
   category,
   accessoryId,
-  onClick
+  onClick,
 }: {
   category: AccessoryCategory;
   accessoryId: string | null;
@@ -198,7 +230,11 @@ function AccessorySlot({
   const accessory = accessoryId ? ACCESSORY_BY_ID[accessoryId] : null;
 
   return (
-    <button className="accessory-slot" type="button" onClick={onClick}>
+    <button
+      className="accessory-slot"
+      type="button"
+      onClick={onClick}
+    >
       <div className={`accessory-slot-icon${accessory ? " filled" : ""}`}>
         {accessory ? <AccessorySprite id={accessory.id} size={40} /> : <span>+</span>}
       </div>

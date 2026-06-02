@@ -36,7 +36,7 @@ export default function App() {
       <AppShell route={route} navigate={navigate}>
         {route === "/" ? <HomePage navigate={navigate} /> : null}
         {route === "/planet" ? <PlanetPage navigate={navigate} /> : null}
-        {route === "/universe" ? <UniversePage /> : null}
+        {route === "/universe" ? <UniversePage navigate={navigate} /> : null}
         {route === "/history" ? <HistoryPage /> : null}
         {route === "/shop" ? <ShopPage /> : null}
         {route === "/customize" ? <CustomizePage navigate={navigate} /> : null}

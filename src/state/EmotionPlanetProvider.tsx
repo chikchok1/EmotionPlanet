@@ -23,6 +23,8 @@ const STORAGE_KEY = "emotionPlanet_v2";
 
 type EmotionPlanetContextValue = {
   state: EmotionPlanetState;
+  viewingPlanetIndex: number;
+  setViewingPlanet: (index: number) => void;
   hasRecordedToday: () => boolean;
   getTodayRecord: () => EmotionRecord | null;
   getDominantEmotion: (records?: EmotionRecord[]) => EmotionId;
@@ -31,6 +33,9 @@ type EmotionPlanetContextValue = {
   purchaseAccessory: (accessoryId: string) => boolean;
   equipAccessory: (accessoryId: string, category: AccessoryCategory) => void;
   unequipAccessory: (category: AccessoryCategory) => void;
+  equipAccessoryForPlanet: (planetIndex: number, accessoryId: string, category: AccessoryCategory) => void;
+  unequipAccessoryForPlanet: (planetIndex: number, category: AccessoryCategory) => void;
+  getEquippedForPlanet: (planetIndex: number) => EquippedAccessories;
 };
 
 const EmotionPlanetContext = createContext<EmotionPlanetContextValue | null>(null);
@@ -80,6 +85,18 @@ const loadInitialState = () => {
 
 export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<EmotionPlanetState>(loadInitialState);
+  const [viewingPlanetIndex, setViewingPlanetIndex] = useState<number>(
+    () => loadInitialState().currentPlanetIndex
+  );
+
+  // 현재 키우는 행성이 바뀌면 (행성 완성 시) 뷰도 자동으로 따라감
+  useEffect(() => {
+    setViewingPlanetIndex(state.currentPlanetIndex);
+  }, [state.currentPlanetIndex]);
+
+  const setViewingPlanet = useCallback((index: number) => {
+    setViewingPlanetIndex(index);
+  }, []);
 
   useEffect(() => {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -220,9 +237,40 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  // 완성된 이전 행성의 장착 아이템 수정
+  const equipAccessoryForPlanet = useCallback((planetIndex: number, accessoryId: string, category: AccessoryCategory) => {
+    setState((previous) => ({
+      ...previous,
+      completedPlanets: previous.completedPlanets.map((p) =>
+        p.planetIndex === planetIndex
+          ? { ...p, equippedAccessories: { ...p.equippedAccessories, [category]: accessoryId } }
+          : p
+      )
+    }));
+  }, []);
+
+  const unequipAccessoryForPlanet = useCallback((planetIndex: number, category: AccessoryCategory) => {
+    setState((previous) => ({
+      ...previous,
+      completedPlanets: previous.completedPlanets.map((p) =>
+        p.planetIndex === planetIndex
+          ? { ...p, equippedAccessories: { ...p.equippedAccessories, [category]: null } }
+          : p
+      )
+    }));
+  }, []);
+
+  const getEquippedForPlanet = useCallback((planetIndex: number): EquippedAccessories => {
+    if (planetIndex === state.currentPlanetIndex) return state.equippedAccessories;
+    const completed = state.completedPlanets.find((p) => p.planetIndex === planetIndex);
+    return completed?.equippedAccessories ?? EMPTY_EQUIPPED;
+  }, [state.currentPlanetIndex, state.equippedAccessories, state.completedPlanets]);
+
   const value = useMemo(
     () => ({
       state,
+      viewingPlanetIndex,
+      setViewingPlanet,
       hasRecordedToday,
       getTodayRecord,
       getDominantEmotion,
@@ -230,10 +278,15 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
       recordEmotion,
       purchaseAccessory,
       equipAccessory,
-      unequipAccessory
+      unequipAccessory,
+      equipAccessoryForPlanet,
+      unequipAccessoryForPlanet,
+      getEquippedForPlanet
     }),
     [
       state,
+      viewingPlanetIndex,
+      setViewingPlanet,
       hasRecordedToday,
       getTodayRecord,
       getDominantEmotion,
@@ -241,7 +294,10 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
       recordEmotion,
       purchaseAccessory,
       equipAccessory,
-      unequipAccessory
+      unequipAccessory,
+      equipAccessoryForPlanet,
+      unequipAccessoryForPlanet,
+      getEquippedForPlanet
     ]
   );
 
