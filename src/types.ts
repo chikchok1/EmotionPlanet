@@ -40,6 +40,7 @@ export type Emotion = {
   points: number;
   description: string;
   faceImage: string;
+  planetImage: string;
 };
 
 export type Accessory = {

@@ -3,7 +3,7 @@ import { PLANETS } from "../data/planets";
 import { PlanetAvatar } from "../components/planet/PlanetAvatar";
 import { PlanetCard } from "../components/planet/PlanetCard";
 import { useEmotionPlanet } from "../state/EmotionPlanetProvider";
-import type { EquippedAccessories, Planet } from "../types";
+import type { EmotionId, EquippedAccessories, Planet, RoutePath } from "../types";
 
 const emptyEquipped: EquippedAccessories = {
   hat: null,
@@ -13,9 +13,42 @@ const emptyEquipped: EquippedAccessories = {
   background: null
 };
 
-export function UniversePage() {
-  const { state, getDominantEmotion, getPlanetRecords } = useEmotionPlanet();
-  const [selectedPlanet, setSelectedPlanet] = useState<Planet | null>(null);
+type UniversePageProps = {
+  navigate: (path: RoutePath) => void;
+};
+
+type ModalInfo = {
+  planet: Planet;
+  planetIndex: number;
+  isCompleted: boolean;
+  isCurrent: boolean;
+  isLocked: boolean;
+  recordCount: number;
+  emotion: EmotionId;
+  equipped: EquippedAccessories;
+};
+
+export function UniversePage({ navigate }: UniversePageProps) {
+  const { state, getDominantEmotion, getPlanetRecords, setViewingPlanet } = useEmotionPlanet();
+  const [modalInfo, setModalInfo] = useState<ModalInfo | null>(null);
+
+  const handlePlanetClick = (planet: Planet, index: number) => {
+    const completed = state.completedPlanets.find((item) => item.planetIndex === index);
+    const isCurrent = index === state.currentPlanetIndex;
+    const isLocked = index > state.currentPlanetIndex;
+    const records = completed?.recordCount ?? (isCurrent ? state.currentPlanetRecords : 0);
+    const planetRecords = getPlanetRecords(index);
+    const emotion = completed?.dominantEmotion ?? (planetRecords.length ? getDominantEmotion(planetRecords) : "calm");
+    const equipped = completed?.equippedAccessories ?? (isCurrent ? state.equippedAccessories : emptyEquipped);
+
+    setModalInfo({ planet, planetIndex: index, isCompleted: Boolean(completed), isCurrent, isLocked, recordCount: records, emotion, equipped });
+  };
+
+  const handleSelectPlanet = (index: number) => {
+    setViewingPlanet(index);
+    setModalInfo(null);
+    navigate("/planet");
+  };
 
   return (
     <div className="screen-stack universe-screen">
@@ -57,22 +90,52 @@ export function UniversePage() {
                 isLocked={isLocked}
                 emotion={emotion}
                 equipped={equipped}
-                onClick={() => setSelectedPlanet(planet)}
+                onClick={() => handlePlanetClick(planet, index)}
               />
             );
           })}
         </div>
       </section>
 
-      {selectedPlanet ? (
-        <div className="modal-backdrop" onClick={() => setSelectedPlanet(null)}>
+      {modalInfo ? (
+        <div className="modal-backdrop" onClick={() => setModalInfo(null)}>
           <section className="planet-modal" onClick={(event) => event.stopPropagation()}>
-            <button className="modal-close" type="button" onClick={() => setSelectedPlanet(null)}>
+            <button className="modal-close" type="button" onClick={() => setModalInfo(null)}>
               ×
             </button>
-            <PlanetAvatar planet={selectedPlanet} emotion="calm" size={180} />
-            <h2 style={{ color: selectedPlanet.color }}>{selectedPlanet.name}</h2>
-            <p>{selectedPlanet.description}</p>
+            <PlanetAvatar
+              planet={modalInfo.planet}
+              emotion={modalInfo.emotion}
+              equipped={modalInfo.isLocked ? emptyEquipped : modalInfo.equipped}
+              size={180}
+              muted={modalInfo.isLocked}
+            />
+            <h2 style={{ color: modalInfo.planet.color }}>{modalInfo.planet.name}</h2>
+            <p>{modalInfo.planet.description}</p>
+
+            {!modalInfo.isLocked && (
+              <p style={{ fontSize: "0.85rem", opacity: 0.7, marginTop: "0.25rem" }}>
+                {modalInfo.recordCount} / {modalInfo.planet.recordsNeeded}일 기록
+                {modalInfo.isCompleted && " ✔️ 완성"}
+              </p>
+            )}
+
+            {!modalInfo.isLocked && (
+              <button
+                className="done-cta"
+                type="button"
+                style={{ marginTop: "1rem", width: "100%" }}
+                onClick={() => handleSelectPlanet(modalInfo.planetIndex)}
+              >
+                {modalInfo.isCurrent ? "🌍 현재 행성 보러가기" : "🔍 이 행성 선택하기"}
+              </button>
+            )}
+
+            {modalInfo.isLocked && (
+              <p style={{ marginTop: "1rem", opacity: 0.5, fontSize: "0.85rem" }}>
+                앞 행성을 완성해야 해제됩니다
+              </p>
+            )}
           </section>
         </div>
       ) : null}
