@@ -47,6 +47,8 @@ export const generateMockRecords = (): EmotionRecord[] => {
   const endDate = new Date(2026, 4, 4);
   let dayOffset = 0;
   let recordIndex = 0;
+  let consumedRecords = 0;
+  let currentPlanetIndex = 0;
 
   while (records.length < 75) {
     const date = new Date(startDate.getTime() + dayOffset * 86400000);
@@ -66,6 +68,13 @@ export const generateMockRecords = (): EmotionRecord[] => {
       }
     }
 
+    // 현재 행성이 채워졌으면 다음 행성으로
+    const planet = PLANETS[currentPlanetIndex];
+    if (consumedRecords >= planet.recordsNeeded) {
+      currentPlanetIndex = Math.min(currentPlanetIndex + 1, PLANETS.length - 1);
+      consumedRecords = 0;
+    }
+
     const emotionId = emotionIds[emotionIndex];
     const emotion = EMOTIONS.find((item) => item.id === emotionId)!;
     const commentIndex = Math.floor(randomSeed(recordIndex * 17 + 3) * mockComments.length);
@@ -75,8 +84,10 @@ export const generateMockRecords = (): EmotionRecord[] => {
       date: formatDateKey(date),
       emotion: emotionId,
       comment: hasComment ? mockComments[commentIndex] : "",
-      points: emotion.points
+      points: emotion.points,
+      planetIndex: currentPlanetIndex
     });
+    consumedRecords += 1;
     recordIndex += 1;
   }
 

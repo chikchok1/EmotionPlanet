@@ -11,7 +11,6 @@ import { ACCESSORY_BY_ID, LEGACY_ACCESSORY_ID_MAP } from "../data/accessories";
 import { EMOTION_BY_ID } from "../data/emotions";
 import { EMPTY_EQUIPPED, createInitialState, formatDateKey } from "../data/mockRecords";
 import { PLANETS } from "../data/planets";
-import { getPlanetRecordRange } from "../utils/planet";
 import type {
   AccessoryCategory,
   EmotionId,
@@ -83,7 +82,12 @@ const normalizeState = (value: Partial<EmotionPlanetState>): EmotionPlanetState 
     longestStreak: numberOr(value.longestStreak, fallback.longestStreak),
     currentPlanetIndex,
     currentPlanetRecords,
-    records: Array.isArray(value.records) ? value.records : fallback.records,
+    records: Array.isArray(value.records)
+      ? value.records.map((r, i) => ({
+          ...r,
+          planetIndex: typeof r.planetIndex === "number" ? r.planetIndex : 0
+        }))
+      : fallback.records,
     completedPlanets: Array.isArray(value.completedPlanets)
       ? value.completedPlanets.map((planet) => {
           const completedPlanetIndex = Math.min(Math.max(planet.planetIndex, 0), PLANETS.length - 1);
@@ -134,15 +138,9 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
 
   const getPlanetRecords = useCallback(
     (planetIndex: number) => {
-      const { start, end } = getPlanetRecordRange(planetIndex);
-      const visibleEnd =
-        planetIndex === state.currentPlanetIndex
-          ? Math.min(end, start + state.currentPlanetRecords)
-          : end;
-
-      return state.records.slice(start, visibleEnd);
+      return state.records.filter((r) => r.planetIndex === planetIndex);
     },
-    [state.currentPlanetIndex, state.currentPlanetRecords, state.records]
+    [state.records]
   );
 
   const getDominantEmotion = useCallback((records: EmotionRecord[] = state.records): EmotionId => {
@@ -179,7 +177,8 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
           date: today,
           emotion: emotionId,
           comment,
-          points: emotion.points
+          points: emotion.points,
+          planetIndex: previous.currentPlanetIndex
         };
         const records = [...previous.records, nextRecord];
         const dateSet = new Set(records.map((record) => record.date));
@@ -194,8 +193,7 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
         const planet = PLANETS[previous.currentPlanetIndex];
         const nextPlanetRecords = previous.currentPlanetRecords + 1;
         const isCompleted = nextPlanetRecords >= planet.recordsNeeded;
-        const { start, end } = getPlanetRecordRange(previous.currentPlanetIndex);
-        const currentPlanetRecords = records.slice(start, end);
+        const currentPlanetRecords = records.filter((r) => r.planetIndex === previous.currentPlanetIndex);
         const dominantEmotion = getDominantEmotion(currentPlanetRecords);
 
         const baseState: EmotionPlanetState = {

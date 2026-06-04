@@ -59,6 +59,7 @@ export type EmotionRecord = {
   emotion: EmotionId;
   comment: string;
   points: number;
+  planetIndex: number;
 };
 
 export type CompletedPlanet = {

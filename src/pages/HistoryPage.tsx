@@ -1,12 +1,28 @@
-import { EMOTIONS, EMOTION_BY_ID } from "../data/emotions";
+import { useState } from "react";
+import { EMOTION_BY_ID } from "../data/emotions";
+import { PLANETS } from "../data/planets";
 import { useEmotionPlanet } from "../state/EmotionPlanetProvider";
-import { countEmotions } from "../utils/planet";
+import { getEmotionSummary } from "../utils/planet";
+import type { EmotionRecord } from "../types";
 
 export function HistoryPage() {
-  const { state } = useEmotionPlanet();
-  const counts = countEmotions(state.records);
-  const totalPoints = state.records.reduce((sum, record) => sum + record.points, 0);
-  const latestRecords = [...state.records].reverse();
+  const { state, getPlanetRecords } = useEmotionPlanet();
+  const totalPoints = state.records.reduce((sum, r) => sum + r.points, 0);
+
+  // 기록이 1개 이상 있는 행성만, 가장 최근 기록 날짜 기준 내림차순 정렬
+  const activePlanets = PLANETS
+    .map((planet, index) => {
+      const records = getPlanetRecords(index);
+      return { planet, index, records };
+    })
+    .filter(({ index, records }) =>
+      records.length > 0 && index <= state.currentPlanetIndex
+    )
+    .sort((a, b) => {
+      const latestA = a.records[a.records.length - 1]?.date ?? "";
+      const latestB = b.records[b.records.length - 1]?.date ?? "";
+      return latestB.localeCompare(latestA);
+    });
 
   return (
     <div className="screen-stack history-screen">
@@ -21,93 +37,24 @@ export function HistoryPage() {
         <StatCard label="연속 기록" value={state.currentStreak} />
       </section>
 
-      {/* ── 감정 분포 ── */}
-      <section className="panel">
-        <div className="section-heading">
-          <h2>감정 분포</h2>
-          <p>지금까지 기록한 감정 비율</p>
-        </div>
-        <div className="emotion-bars">
-          {EMOTIONS.map((emotion) => {
-            const count = counts[emotion.id];
-            const ratio = state.records.length ? Math.round((count / state.records.length) * 100) : 0;
-            return (
-              <div className="emotion-bar-row" key={emotion.id}>
-                {/* 이모지 → 행성 이미지 */}
-                <div className="emotion-bar-label">
-                  <div className="history-bar-planet">
-                    <img
-                      src={emotion.planetImage}
-                      alt={emotion.name}
-                      className="history-bar-planet-img"
-                      onError={(e) => {
-                        const t = e.currentTarget as HTMLImageElement;
-                        t.style.display = "none";
-                        const fb = t.nextElementSibling as HTMLElement;
-                        if (fb) fb.style.display = "flex";
-                      }}
-                    />
-                    <span className="history-bar-planet-fallback" style={{ display: "none" }}>
-                      {emotion.emoji}
-                    </span>
-                  </div>
-                  <span style={{ color: "var(--t1)" }}>{emotion.name}</span>
-                </div>
-                <div className="emotion-bar-track">
-                  <div
-                    className="emotion-bar-fill"
-                    style={{ width: `${ratio}%`, background: emotion.color }}
-                  />
-                </div>
-                <span>{count}</span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+      <div className="pixel-label" style={{ marginTop: 6 }}>행성별 기록</div>
 
-      {/* ── 최근 기록 ── */}
-      <section className="panel">
-        <div className="section-heading">
-          <h2>최근 기록</h2>
-          <p>최신순으로 보는 감정 기록</p>
+      {activePlanets.length === 0 && (
+        <div className="empty-state">
+          <span>🪐</span>
+          <p>아직 기록이 없어요. 첫 감정을 기록해보세요!</p>
         </div>
-        <div className="record-list">
-          {latestRecords.slice(0, 18).map((record) => {
-            const emotion = EMOTION_BY_ID[record.emotion];
-            return (
-              <article
-                className="record-item"
-                key={record.id}
-                style={{ "--record-accent": emotion.color } as React.CSSProperties}
-              >
-                {/* 이모지 → 행성 이미지 썸네일 */}
-                <div className="record-planet-thumb">
-                  <img
-                    src={emotion.planetImage}
-                    alt={emotion.name}
-                    className="record-planet-img"
-                    onError={(e) => {
-                      const t = e.currentTarget as HTMLImageElement;
-                      t.style.display = "none";
-                      const fb = t.nextElementSibling as HTMLElement;
-                      if (fb) fb.style.display = "flex";
-                    }}
-                  />
-                  <span className="record-planet-fallback" style={{ display: "none" }}>
-                    {emotion.emoji}
-                  </span>
-                </div>
-                <div>
-                  <strong style={{ color: emotion.color }}>{emotion.name}</strong>
-                  {record.comment ? <p>{record.comment}</p> : null}
-                </div>
-                <time>{record.date.slice(5)}</time>
-              </article>
-            );
-          })}
-        </div>
-      </section>
+      )}
+
+      {activePlanets.map(({ planet, index, records }) => (
+        <PlanetRecordCard
+          key={planet.id}
+          planet={planet}
+          planetIndex={index}
+          records={records}
+          isCurrentPlanet={index === state.currentPlanetIndex}
+        />
+      ))}
     </div>
   );
 }
@@ -117,6 +64,119 @@ function StatCard({ label, value }: { label: string; value: number }) {
     <div className="stat-card">
       <strong>{value.toLocaleString()}</strong>
       <span>{label}</span>
+    </div>
+  );
+}
+
+function PlanetRecordCard({
+  planet,
+  planetIndex,
+  records,
+  isCurrentPlanet
+}: {
+  planet: (typeof PLANETS)[number];
+  planetIndex: number;
+  records: EmotionRecord[];
+  isCurrentPlanet: boolean;
+}) {
+  const [open, setOpen] = useState(planetIndex === 0);
+  const emotionSummary = getEmotionSummary(records);
+  const latestDate = records[records.length - 1]?.date.slice(5) ?? "";
+  const progress = Math.min(records.length / planet.recordsNeeded, 1);
+  const isCompleted = !isCurrentPlanet;
+
+  return (
+    <div className="planet-record-card">
+      {/* 헤더 */}
+      <button
+        className="planet-record-header"
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+      >
+        <div
+          className="planet-record-orb"
+          style={{ background: `${planet.color}18`, borderColor: `${planet.color}33` }}
+        >
+          <img
+            src={planet.planetImage}
+            alt={planet.name}
+            className="planet-record-orb-img"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+            }}
+          />
+        </div>
+        <div className="planet-record-info">
+          <span className="planet-record-name">{planet.name}</span>
+          <span className="planet-record-meta">
+            {isCompleted ? "완성 " : ""}{records.length}회 기록 · {latestDate}
+          </span>
+        </div>
+        <div className="planet-record-right">
+          <span
+            className="planet-record-badge"
+            style={{
+              color: planet.color,
+              borderColor: `${planet.color}44`,
+              background: `${planet.color}12`
+            }}
+          >
+            {isCompleted ? "완성" : `${records.length} / ${planet.recordsNeeded}`}
+          </span>
+          <span className={`planet-record-chevron${open ? " open" : ""}`}>▾</span>
+        </div>
+      </button>
+
+      {/* 프로그레스 바 */}
+      <div className="planet-record-progress-track">
+        <div
+          className="planet-record-progress-fill"
+          style={{ width: `${progress * 100}%`, background: planet.color }}
+        />
+      </div>
+
+      {/* 감정 요약 칩 */}
+      <div className="planet-record-emotion-chips">
+        {emotionSummary.map(({ emotion, count }) => (
+          <span
+            key={emotion.id}
+            className="planet-record-chip"
+            style={{
+              color: emotion.color,
+              borderColor: `${emotion.color}44`,
+              background: `${emotion.color}12`
+            }}
+          >
+            {emotion.name} {count}
+          </span>
+        ))}
+      </div>
+
+      {/* 기록 목록 (토글) */}
+      {open && (
+        <div className="planet-record-list">
+          {[...records].reverse().map((record) => {
+            const emotion = EMOTION_BY_ID[record.emotion];
+            return (
+              <div
+                key={record.id}
+                className="planet-record-row"
+                style={{ borderLeftColor: emotion.color }}
+              >
+                <div className="planet-record-row-info">
+                  <span className="planet-record-row-emotion" style={{ color: emotion.color }}>
+                    {emotion.name}
+                  </span>
+                  {record.comment ? (
+                    <p className="planet-record-row-comment">{record.comment}</p>
+                  ) : null}
+                </div>
+                <time className="planet-record-row-date">{record.date.slice(5)}</time>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
