@@ -53,7 +53,16 @@ const sceneDecorProfiles: Record<string, DecorProfile> = {
   "star-band": { scale: 0.38, top: 72, x: 82, rotate: 2, zIndex: 5 },
   "bow-hat": { scale: 0.62, top: 83, x: 50, rotate: 0, zIndex: 2 },
   "night-cap": { scale: 0.42, top: 40, x: 17, rotate: 2, zIndex: 2 },
-  "space-cap": { scale: 0.48, top: 71, x: 84, rotate: 9, zIndex: 5 }
+  "space-cap": { scale: 0.48, top: 71, x: 84, rotate: 9, zIndex: 5 },
+  // 새 장식 아이템
+  "star-mailbox": { scale: 0.44, top: 78, x: 82, rotate: 5, zIndex: 5 },
+  "emotion-crystal-lamp": { scale: 0.46, top: 75, x: 18, rotate: -4, zIndex: 5 },
+  "mini-picnic-rug": { scale: 0.62, top: 88, x: 50, rotate: 0, zIndex: 2 },
+  "cosmic-music-box": { scale: 0.42, top: 76, x: 80, rotate: 6, zIndex: 5 },
+  "floating-bubble-jar": { scale: 0.40, top: 30, x: 78, rotate: 8, zIndex: 2 },
+  "mini-comet-signpost": { scale: 0.44, top: 70, x: 16, rotate: -6, zIndex: 5 },
+  "dream-telescope": { scale: 0.46, top: 72, x: 82, rotate: 4, zIndex: 5 },
+  "cozy-space-bookshelf": { scale: 0.54, top: 82, x: 20, rotate: -3, zIndex: 5 }
 };
 
 const stickerDecorProfiles: Record<string, DecorProfile> = {
