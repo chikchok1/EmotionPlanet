@@ -6,6 +6,7 @@ import { PlanetAvatar } from "../components/planet/PlanetAvatar";
 import { PlanetProgress } from "../components/planet/PlanetProgress";
 import { useEmotionPlanet } from "../state/EmotionPlanetProvider";
 import type { AccessoryCategory, RoutePath } from "../types";
+import { rememberAccessoryCategory } from "../utils/accessoryCategory";
 import { getCurrentStage, getEmotionSummary, getStageLabel } from "../utils/planet";
 
 type PlanetPageProps = {
@@ -20,10 +21,15 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
   const planetRecords = getPlanetRecords(viewingPlanetIndex);
   const dominantEmotion = getDominantEmotion(planetRecords);
   const dominant = EMOTION_BY_ID[dominantEmotion];
-  const stage = getCurrentStage(isViewingCurrent ? state.currentPlanetRecords : planet.recordsNeeded);
   const emotionSummary = getEmotionSummary(planetRecords);
   const equippedToShow = isViewingCurrent ? state.equippedAccessories : (completedPlanet?.equippedAccessories ?? state.equippedAccessories);
   const recordCountToShow = isViewingCurrent ? state.currentPlanetRecords : (completedPlanet?.recordCount ?? 0);
+  const stage = getCurrentStage(recordCountToShow, planet.recordsNeeded);
+
+  const openCustomize = (category?: AccessoryCategory) => {
+    if (category) rememberAccessoryCategory(category);
+    navigate("/customize");
+  };
 
   return (
     <div className="screen-stack planet-screen">
@@ -152,11 +158,11 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
         </div>
       </section>
 
-      {/* ── 장착 아이템 ── */}
+      {/* ── 꾸미기 요소 ── */}
       <section className="panel">
         <div className="panel-row panel-row-spaced">
-          <span className="pixel-label">장착 아이템</span>
-          <button className="mini-button" type="button" onClick={() => navigate("/customize")}>
+          <span className="pixel-label">꾸미기 요소</span>
+          <button className="mini-button" type="button" onClick={() => openCustomize()}>
             꾸미기
           </button>
         </div>
@@ -166,7 +172,7 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
               key={category}
               category={category}
               accessoryId={equippedToShow[category]}
-              onClick={() => navigate("/customize")}
+              onClick={() => openCustomize(category)}
             />
           ))}
         </div>

@@ -4,10 +4,9 @@ export const ACCESSORY_SPRITE = "/figma-assets/f2b72c5b-d180-4f2d-bd67-a54563d67
 export const ACCESSORY_GRID = { columns: 8, rows: 8 };
 
 export const CATEGORY_LABELS: Record<AccessoryCategory, string> = {
-  hat: "모자",
-  shoes: "신발",
-  face: "얼굴",
-  ring: "링",
+  hat: "장식",
+  face: "스티커",
+  ring: "이펙트",
   background: "배경"
 };
 
@@ -27,39 +26,31 @@ export const RARITY_LABELS: Record<Rarity, string> = {
 
 export const ACCESSORY_CATEGORIES: AccessoryCategory[] = [
   "hat",
-  "shoes",
   "face",
   "ring",
   "background"
 ];
 
 export const ACCESSORIES: Accessory[] = [
-  { id: "crown", name: "왕관", category: "hat", price: 100, col: 0, row: 0, rarity: "rare" },
-  { id: "witch-hat", name: "마녀 모자", category: "hat", price: 80, col: 1, row: 0, rarity: "common" },
-  { id: "astronaut", name: "우주 헬멧", category: "hat", price: 150, col: 2, row: 0, rarity: "epic" },
-  { id: "sprout", name: "새싹 모자", category: "hat", price: 60, col: 3, row: 0, rarity: "common" },
-  { id: "cat-ears", name: "고양이 귀", category: "hat", price: 70, col: 4, row: 0, rarity: "common" },
-  { id: "star-band", name: "별 머리띠", category: "hat", price: 50, col: 5, row: 0, rarity: "common" },
-  { id: "bow-hat", name: "리본 모자", category: "hat", price: 60, col: 6, row: 0, rarity: "common" },
-  { id: "night-cap", name: "잠자리 모자", category: "hat", price: 40, col: 7, row: 0, rarity: "common" },
-  { id: "space-cap", name: "우주 야구모자", category: "hat", price: 80, col: 0, row: 1, rarity: "rare" },
-  { id: "sneakers", name: "빨간 운동화", category: "shoes", price: 60, col: 1, row: 1, rarity: "common" },
-  { id: "boots", name: "갈색 부츠", category: "shoes", price: 80, col: 2, row: 1, rarity: "common" },
-  { id: "rocket-boots", name: "로켓 부츠", category: "shoes", price: 120, col: 3, row: 1, rarity: "epic" },
-  { id: "cloud-shoes", name: "구름 신발", category: "shoes", price: 90, col: 4, row: 1, rarity: "rare" },
-  { id: "star-shoes", name: "별 슬리퍼", category: "shoes", price: 50, col: 5, row: 1, rarity: "common" },
-  { id: "blue-shoes", name: "파란 신발", category: "shoes", price: 60, col: 6, row: 1, rarity: "common" },
-  { id: "winged-shoes", name: "날개 신발", category: "shoes", price: 130, col: 7, row: 1, rarity: "epic" },
-  { id: "sunglasses", name: "선글라스", category: "face", price: 70, col: 0, row: 2, rarity: "common" },
-  { id: "star-glasses", name: "별 안경", category: "face", price: 80, col: 1, row: 2, rarity: "rare" },
-  { id: "face-mask", name: "마스크", category: "face", price: 40, col: 3, row: 2, rarity: "common" },
-  { id: "crystal-glasses", name: "수정 안경", category: "face", price: 90, col: 5, row: 2, rarity: "rare" },
-  { id: "plain-ring", name: "기본 링", category: "ring", price: 50, col: 0, row: 4, rarity: "common" },
-  { id: "glow-ring", name: "빛나는 링", category: "ring", price: 100, col: 1, row: 4, rarity: "rare" },
-  { id: "heart-ring", name: "하트 링", category: "ring", price: 80, col: 2, row: 4, rarity: "common" },
-  { id: "star-ring", name: "별 링", category: "ring", price: 80, col: 3, row: 4, rarity: "common" },
-  { id: "rainbow-ring", name: "무지개 링", category: "ring", price: 120, col: 4, row: 4, rarity: "rare" },
-  { id: "satellite", name: "위성", category: "ring", price: 200, col: 7, row: 4, rarity: "legendary" },
+  { id: "crown", name: "별빛 쿠션", category: "hat", price: 100, col: 0, row: 0, rarity: "rare" },
+  { id: "witch-hat", name: "달빛 스탠드", category: "hat", price: 80, col: 1, row: 0, rarity: "common" },
+  { id: "astronaut", name: "미니 위성", category: "hat", price: 150, col: 2, row: 0, rarity: "epic" },
+  { id: "sprout", name: "우주 화분", category: "hat", price: 60, col: 3, row: 0, rarity: "common" },
+  { id: "cat-ears", name: "별자리 풍선", category: "hat", price: 70, col: 4, row: 0, rarity: "common" },
+  { id: "star-band", name: "기록 깃발", category: "hat", price: 50, col: 5, row: 0, rarity: "common" },
+  { id: "bow-hat", name: "몽글 구름", category: "hat", price: 60, col: 6, row: 0, rarity: "common" },
+  { id: "night-cap", name: "수면 달조명", category: "hat", price: 40, col: 7, row: 0, rarity: "common" },
+  { id: "space-cap", name: "미니 로켓", category: "hat", price: 80, col: 0, row: 1, rarity: "rare" },
+  { id: "sunglasses", name: "반짝 별 스티커", category: "face", price: 70, col: 0, row: 2, rarity: "common" },
+  { id: "star-glasses", name: "하트 스티커", category: "face", price: 80, col: 1, row: 2, rarity: "rare" },
+  { id: "face-mask", name: "구름 스티커", category: "face", price: 40, col: 3, row: 2, rarity: "common" },
+  { id: "crystal-glasses", name: "크리스탈 스티커", category: "face", price: 90, col: 5, row: 2, rarity: "rare" },
+  { id: "aqua-nebula-effect", name: "시안 성운 이펙트", category: "ring", price: 100, col: 1, row: 5, rarity: "rare" },
+  { id: "gold-star-effect", name: "황금 별빛 이펙트", category: "ring", price: 120, col: 0, row: 5, rarity: "epic" },
+  { id: "violet-galaxy-effect", name: "보라 은하 이펙트", category: "ring", price: 150, col: 3, row: 5, rarity: "epic" },
+  { id: "aurora-leaf-effect", name: "오로라 잎새 이펙트", category: "ring", price: 130, col: 5, row: 5, rarity: "rare" },
+  { id: "meteor-spark-effect", name: "유성 반짝 이펙트", category: "ring", price: 160, col: 2, row: 5, rarity: "legendary" },
+  { id: "heart-dream-effect", name: "하트 드림 이펙트", category: "ring", price: 140, col: 7, row: 5, rarity: "epic" },
   { id: "classic-deep-bg", name: "클래식 심우주 배경", category: "background", price: 100, col: 0, row: 6, rarity: "common" },
   { id: "purple-galaxy-bg", name: "보라 은하 배경", category: "background", price: 140, col: 1, row: 6, rarity: "epic" },
   { id: "cyan-nebula-bg", name: "시안 성운 배경", category: "background", price: 130, col: 2, row: 6, rarity: "rare" },
@@ -77,3 +68,23 @@ export const ACCESSORIES: Accessory[] = [
 export const ACCESSORY_BY_ID = Object.fromEntries(
   ACCESSORIES.map((accessory) => [accessory.id, accessory])
 ) as Record<string, Accessory>;
+
+export const LEGACY_ACCESSORY_ID_MAP: Record<string, string> = {
+  "plain-ring": "aqua-nebula-effect",
+  "glow-ring": "aqua-nebula-effect",
+  "heart-ring": "heart-dream-effect",
+  "star-ring": "gold-star-effect",
+  "rainbow-ring": "violet-galaxy-effect",
+  satellite: "meteor-spark-effect"
+};
+
+export const ACCESSORY_IMAGE_BY_ID = Object.fromEntries(
+  ACCESSORIES
+    .filter((accessory) => accessory.category !== "background")
+    .map((accessory) => [
+      accessory.id,
+      accessory.category === "ring"
+        ? `/figma-assets/accessory_effects/${accessory.id}.png`
+        : `/figma-assets/accessory_items/${accessory.id}.png`
+    ])
+) as Record<string, string>;

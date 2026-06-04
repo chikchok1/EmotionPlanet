@@ -11,7 +11,7 @@ export type PlanetId =
 
 export type EmotionId = "joy" | "calm" | "excited" | "tired" | "sad" | "angry";
 
-export type AccessoryCategory = "hat" | "shoes" | "face" | "ring" | "background";
+export type AccessoryCategory = "hat" | "face" | "ring" | "background";
 
 export type Rarity = "common" | "rare" | "epic" | "legendary";
 

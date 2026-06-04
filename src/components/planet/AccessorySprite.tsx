@@ -1,4 +1,4 @@
-import { ACCESSORY_BY_ID, ACCESSORY_GRID, ACCESSORY_SPRITE } from "../../data/accessories";
+import { ACCESSORY_BY_ID, ACCESSORY_GRID, ACCESSORY_IMAGE_BY_ID, ACCESSORY_SPRITE } from "../../data/accessories";
 import { getSpaceBackgroundUrl, SPACE_BACKGROUNDS } from "../../data/backgrounds";
 
 type AccessorySpriteProps = {
@@ -30,6 +30,27 @@ export function AccessorySprite({ id, size = 48, className, style }: AccessorySp
 
   const accessory = ACCESSORY_BY_ID[id];
   if (!accessory) return null;
+
+  const accessoryImage = ACCESSORY_IMAGE_BY_ID[id];
+
+  if (accessoryImage) {
+    return (
+      <div
+        className={className}
+        style={{
+          width: size,
+          height: size,
+          backgroundImage: `url('${accessoryImage}')`,
+          backgroundPosition: "center",
+          backgroundSize: "contain",
+          backgroundRepeat: "no-repeat",
+          imageRendering: "pixelated",
+          flexShrink: 0,
+          ...style
+        }}
+      />
+    );
+  }
 
   const x = accessory.col === 0 ? 0 : (accessory.col / (ACCESSORY_GRID.columns - 1)) * 100;
   const y = accessory.row === 0 ? 0 : (accessory.row / (ACCESSORY_GRID.rows - 1)) * 100;

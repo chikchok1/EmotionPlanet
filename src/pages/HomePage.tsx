@@ -4,7 +4,7 @@ import { PLANETS } from "../data/planets";
 import { PlanetAvatar } from "../components/planet/PlanetAvatar";
 import { useEmotionPlanet } from "../state/EmotionPlanetProvider";
 import type { EmotionId, RoutePath } from "../types";
-import { formatDisplayDate, getCurrentStage } from "../utils/planet";
+import { formatDisplayDate, getCurrentStage, getPlanetMilestones } from "../utils/planet";
 
 type HomePageProps = {
   navigate: (path: RoutePath) => void;
@@ -30,7 +30,7 @@ export function HomePage({ navigate }: HomePageProps) {
   const todayRecord = getTodayRecord();
   const displayedEmotion = todayRecord?.emotion ?? selectedEmotion ?? dominantEmotion;
   const progress = state.currentPlanetRecords / currentPlanet.recordsNeeded;
-  const stage = getCurrentStage(state.currentPlanetRecords);
+  const stage = getCurrentStage(state.currentPlanetRecords, currentPlanet.recordsNeeded);
   const selected = selectedEmotion ? EMOTION_BY_ID[selectedEmotion] : null;
 
   const completionCard = useMemo(() => {
@@ -53,8 +53,7 @@ export function HomePage({ navigate }: HomePageProps) {
     const needed = currentPlanet.recordsNeeded;
     const prog = Math.min(100, Math.round((rec / needed) * 100));
 
-    // 마일스톤: 7일·21일·30일
-    const milestones = [7, 21, 30];
+    const milestones = getPlanetMilestones(needed);
 
     return (
       <div className="screen-stack home-screen">
@@ -148,25 +147,25 @@ export function HomePage({ navigate }: HomePageProps) {
                   }}
                 />
               </div>
-              {milestones.map((m) => (
+              {milestones.map(({ day }) => (
                 <div
-                  key={m}
+                  key={day}
                   className="done-milestone-tick"
-                  style={{ left: `${Math.round((m / needed) * 100)}%` }}
+                  style={{ left: `${Math.round((day / needed) * 100)}%` }}
                 />
               ))}
             </div>
 
             {/* 마일스톤 라벨 행 */}
             <div className="done-milestone-labels">
-              {milestones.map((m) => (
+              {milestones.map(({ day }) => (
                 <div
-                  key={m}
-                  className={`done-milestone-label ${rec >= m ? "reached" : ""}`}
-                  style={rec >= m ? { color: currentPlanet.color } : undefined}
+                  key={day}
+                  className={`done-milestone-label ${rec >= day ? "reached" : ""}`}
+                  style={rec >= day ? { color: currentPlanet.color } : undefined}
                 >
-                  <span className="done-milestone-icon">{rec >= m ? "✓" : "○"}</span>
-                  {m}일
+                  <span className="done-milestone-icon">{rec >= day ? "✓" : "○"}</span>
+                  {day}일
                 </div>
               ))}
             </div>

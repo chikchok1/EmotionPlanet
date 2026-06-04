@@ -11,8 +11,13 @@ type AppShellProps = {
 };
 
 export function AppShell({ route, navigate, children }: AppShellProps) {
-  const { state } = useEmotionPlanet();
-  const backgroundUrl = getSpaceBackgroundUrl(state.equippedAccessories.background);
+  const { state, getEquippedForPlanet, viewingPlanetIndex } = useEmotionPlanet();
+  const backgroundPlanetIndex =
+    route === "/planet" || route === "/shop" || route === "/customize"
+      ? viewingPlanetIndex
+      : state.currentPlanetIndex;
+  const equipped = getEquippedForPlanet(backgroundPlanetIndex);
+  const backgroundUrl = getSpaceBackgroundUrl(equipped.background);
 
   return (
     <div className="app-root">

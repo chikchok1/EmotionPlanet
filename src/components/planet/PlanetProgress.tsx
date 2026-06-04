@@ -1,19 +1,13 @@
 import type { Planet } from "../../types";
-import { getCurrentStage } from "../../utils/planet";
+import { getPlanetMilestones } from "../../utils/planet";
 
 type PlanetProgressProps = {
   planet: Planet;
   current: number;
 };
 
-const MILESTONES = [
-  { day: 7,  label: "새싹",   icon: "🌱" },
-  { day: 21, label: "성장",   icon: "🌿" },
-  { day: 30, label: "완성",   icon: "🌟" },
-];
-
 export function PlanetProgress({ planet, current }: PlanetProgressProps) {
-  const stage = getCurrentStage(current);
+  const milestones = getPlanetMilestones(planet.recordsNeeded);
   const progress = Math.min(100, Math.round((current / planet.recordsNeeded) * 100));
 
   return (
@@ -37,7 +31,7 @@ export function PlanetProgress({ planet, current }: PlanetProgressProps) {
             }}
           />
         </div>
-        {MILESTONES.map(({ day }) => (
+        {milestones.map(({ day }) => (
           <div
             key={day}
             className={`pp-tick ${current >= day ? "pp-tick-reached" : ""}`}
@@ -51,7 +45,7 @@ export function PlanetProgress({ planet, current }: PlanetProgressProps) {
 
       {/* 마일스톤 뱃지 행 */}
       <div className="pp-milestones">
-        {MILESTONES.map(({ day, label, icon }) => {
+        {milestones.map(({ day, label, icon }) => {
           const reached = current >= day;
           return (
             <div

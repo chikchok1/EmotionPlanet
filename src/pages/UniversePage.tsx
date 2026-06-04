@@ -7,7 +7,6 @@ import type { EmotionId, EquippedAccessories, Planet, RoutePath } from "../types
 
 const emptyEquipped: EquippedAccessories = {
   hat: null,
-  shoes: null,
   face: null,
   ring: null,
   background: null

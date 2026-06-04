@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { RoutePath } from "../../types";
 
 type BottomNavProps = {
@@ -5,7 +6,7 @@ type BottomNavProps = {
   navigate: (path: RoutePath) => void;
 };
 
-const navItems: Array<{ path: RoutePath; label: string; icon: JSX.Element }> = [
+const navItems: Array<{ path: RoutePath; label: string; icon: ReactNode }> = [
   {
     path: "/",
     label: "홈",
@@ -73,6 +74,7 @@ export function BottomNav({ activeRoute, navigate }: BottomNavProps) {
             aria-label={item.label}
           >
             <span className="bottom-nav-icon">{item.icon}</span>
+            <span className="bottom-nav-label">{item.label}</span>
             {active && <span className="bottom-nav-dot" />}
           </button>
         );

@@ -7,10 +7,11 @@ import {
   useState,
   type ReactNode
 } from "react";
-import { ACCESSORY_BY_ID } from "../data/accessories";
+import { ACCESSORY_BY_ID, LEGACY_ACCESSORY_ID_MAP } from "../data/accessories";
 import { EMOTION_BY_ID } from "../data/emotions";
 import { EMPTY_EQUIPPED, createInitialState, formatDateKey } from "../data/mockRecords";
 import { PLANETS } from "../data/planets";
+import { getPlanetRecordRange } from "../utils/planet";
 import type {
   AccessoryCategory,
   EmotionId,
@@ -40,17 +41,39 @@ type EmotionPlanetContextValue = {
 
 const EmotionPlanetContext = createContext<EmotionPlanetContextValue | null>(null);
 
-const normalizeEquipped = (value?: Partial<EquippedAccessories> | null): EquippedAccessories => ({
-  ...EMPTY_EQUIPPED,
-  ...(value ?? {})
-});
+const normalizeAccessoryId = (id: string | null | undefined) =>
+  id ? (LEGACY_ACCESSORY_ID_MAP[id] ?? id) : null;
+
+const normalizeEquipped = (value?: Partial<EquippedAccessories> | null): EquippedAccessories => {
+  const next = {
+    ...EMPTY_EQUIPPED,
+    ...(value ?? {})
+  };
+
+  return {
+    ...next,
+    ring: normalizeAccessoryId(next.ring)
+  };
+};
+
+const normalizeOwnedAccessories = (value: unknown, fallback: string[]) => {
+  const source = Array.isArray(value) ? value : fallback;
+  return Array.from(new Set(source.map((id) => LEGACY_ACCESSORY_ID_MAP[id] ?? id)));
+};
 
 const numberOr = (value: unknown, fallback: number) =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
 
 const normalizeState = (value: Partial<EmotionPlanetState>): EmotionPlanetState => {
   const fallback = createInitialState();
-  const currentPlanetIndex = Math.min(numberOr(value.currentPlanetIndex, fallback.currentPlanetIndex), PLANETS.length - 1);
+  const currentPlanetIndex = Math.min(
+    Math.max(numberOr(value.currentPlanetIndex, fallback.currentPlanetIndex), 0),
+    PLANETS.length - 1
+  );
+  const currentPlanetRecords = Math.min(
+    numberOr(value.currentPlanetRecords, fallback.currentPlanetRecords),
+    PLANETS[currentPlanetIndex].recordsNeeded
+  );
 
   return {
     ...fallback,
@@ -59,15 +82,22 @@ const normalizeState = (value: Partial<EmotionPlanetState>): EmotionPlanetState 
     currentStreak: numberOr(value.currentStreak, fallback.currentStreak),
     longestStreak: numberOr(value.longestStreak, fallback.longestStreak),
     currentPlanetIndex,
-    currentPlanetRecords: numberOr(value.currentPlanetRecords, fallback.currentPlanetRecords),
+    currentPlanetRecords,
     records: Array.isArray(value.records) ? value.records : fallback.records,
     completedPlanets: Array.isArray(value.completedPlanets)
-      ? value.completedPlanets.map((planet) => ({
-          ...planet,
-          equippedAccessories: normalizeEquipped(planet.equippedAccessories)
-        }))
+      ? value.completedPlanets.map((planet) => {
+          const completedPlanetIndex = Math.min(Math.max(planet.planetIndex, 0), PLANETS.length - 1);
+          const completedPlanet = PLANETS[completedPlanetIndex];
+
+          return {
+            ...planet,
+            planetIndex: completedPlanetIndex,
+            recordCount: Math.min(numberOr(planet.recordCount, completedPlanet.recordsNeeded), completedPlanet.recordsNeeded),
+            equippedAccessories: normalizeEquipped(planet.equippedAccessories)
+          };
+        })
       : fallback.completedPlanets,
-    ownedAccessories: Array.isArray(value.ownedAccessories) ? value.ownedAccessories : fallback.ownedAccessories,
+    ownedAccessories: normalizeOwnedAccessories(value.ownedAccessories, fallback.ownedAccessories),
     equippedAccessories: normalizeEquipped(value.equippedAccessories)
   };
 };
@@ -104,12 +134,15 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
 
   const getPlanetRecords = useCallback(
     (planetIndex: number) => {
-      const planet = PLANETS[Math.min(planetIndex, PLANETS.length - 1)];
-      const start = planetIndex * planet.recordsNeeded;
-      const end = start + planet.recordsNeeded;
-      return state.records.slice(start, end);
+      const { start, end } = getPlanetRecordRange(planetIndex);
+      const visibleEnd =
+        planetIndex === state.currentPlanetIndex
+          ? Math.min(end, start + state.currentPlanetRecords)
+          : end;
+
+      return state.records.slice(start, visibleEnd);
     },
-    [state.records]
+    [state.currentPlanetIndex, state.currentPlanetRecords, state.records]
   );
 
   const getDominantEmotion = useCallback((records: EmotionRecord[] = state.records): EmotionId => {
@@ -161,10 +194,8 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
         const planet = PLANETS[previous.currentPlanetIndex];
         const nextPlanetRecords = previous.currentPlanetRecords + 1;
         const isCompleted = nextPlanetRecords >= planet.recordsNeeded;
-        const currentPlanetRecords = records.slice(
-          previous.currentPlanetIndex * planet.recordsNeeded,
-          (previous.currentPlanetIndex + 1) * planet.recordsNeeded
-        );
+        const { start, end } = getPlanetRecordRange(previous.currentPlanetIndex);
+        const currentPlanetRecords = records.slice(start, end);
         const dominantEmotion = getDominantEmotion(currentPlanetRecords);
 
         const baseState: EmotionPlanetState = {
@@ -237,7 +268,7 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
-  // 완성된 이전 행성의 장착 아이템 수정
+  // 완성된 이전 행성의 꾸미기 요소 수정
   const equipAccessoryForPlanet = useCallback((planetIndex: number, accessoryId: string, category: AccessoryCategory) => {
     setState((previous) => ({
       ...previous,

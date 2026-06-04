@@ -2,9 +2,22 @@ import { EMOTION_BY_ID } from "../data/emotions";
 import { PLANETS } from "../data/planets";
 import type { EmotionId, EmotionRecord } from "../types";
 
-export const getCurrentStage = (recordCount: number) => {
-  if (recordCount < 7) return 1;
-  if (recordCount < 21) return 2;
+export const getPlanetMilestones = (recordsNeeded: number) => {
+  const complete = Math.max(1, recordsNeeded);
+  const sprout = Math.max(1, Math.round(complete * 0.3));
+  const growth = Math.min(complete - 1, Math.max(sprout + 1, Math.round(complete * 0.7)));
+
+  return [
+    { day: sprout, label: "새싹", icon: "🌱" },
+    { day: growth, label: "성장", icon: "🌿" },
+    { day: complete, label: "완성", icon: "🌟" }
+  ];
+};
+
+export const getCurrentStage = (recordCount: number, recordsNeeded = 30) => {
+  const [sprout, growth] = getPlanetMilestones(recordsNeeded);
+  if (recordCount < sprout.day) return 1;
+  if (recordCount < growth.day) return 2;
   return 3;
 };
 
@@ -33,6 +46,14 @@ export const getEmotionSummary = (records: EmotionRecord[]) =>
     .sort((a, b) => b.count - a.count);
 
 export const getSafePlanet = (planetIndex: number) => PLANETS[Math.min(planetIndex, PLANETS.length - 1)];
+
+export const getPlanetRecordRange = (planetIndex: number) => {
+  const safeIndex = Math.min(Math.max(planetIndex, 0), PLANETS.length - 1);
+  const start = PLANETS.slice(0, safeIndex).reduce((sum, planet) => sum + planet.recordsNeeded, 0);
+  const end = start + PLANETS[safeIndex].recordsNeeded;
+
+  return { start, end };
+};
 
 export const formatDisplayDate = (date = new Date()) => {
   const weekdays = ["일", "월", "화", "수", "목", "금", "토"];

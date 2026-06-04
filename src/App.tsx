@@ -26,6 +26,10 @@ export default function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [route]);
+
   const navigate = (path: RoutePath) => {
     window.history.pushState(null, "", path);
     setRoute(path);
@@ -38,7 +42,7 @@ export default function App() {
         {route === "/planet" ? <PlanetPage navigate={navigate} /> : null}
         {route === "/universe" ? <UniversePage navigate={navigate} /> : null}
         {route === "/history" ? <HistoryPage /> : null}
-        {route === "/shop" ? <ShopPage /> : null}
+        {route === "/shop" ? <ShopPage navigate={navigate} /> : null}
         {route === "/customize" ? <CustomizePage navigate={navigate} /> : null}
       </AppShell>
     </EmotionPlanetProvider>

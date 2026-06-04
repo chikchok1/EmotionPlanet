@@ -1,10 +1,9 @@
 import { EMOTIONS } from "./emotions";
 import { PLANETS } from "./planets";
-import type { EmotionId, EmotionPlanetState, EmotionRecord, EquippedAccessories } from "../types";
+import type { CompletedPlanet, EmotionId, EmotionPlanetState, EmotionRecord, EquippedAccessories } from "../types";
 
 export const EMPTY_EQUIPPED: EquippedAccessories = {
   hat: null,
-  shoes: null,
   face: null,
   ring: null,
   background: null
@@ -97,40 +96,68 @@ export const calculateStreak = (records: EmotionRecord[], today = new Date()) =>
   return streak;
 };
 
+const getDominantEmotion = (records: EmotionRecord[]): EmotionId => {
+  const counts = records.reduce<Record<EmotionId, number>>(
+    (acc, record) => {
+      acc[record.emotion] += 1;
+      return acc;
+    },
+    { joy: 0, calm: 0, excited: 0, tired: 0, sad: 0, angry: 0 }
+  );
+
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0] as EmotionId;
+};
+
 export const createInitialState = (): EmotionPlanetState => {
   const records = generateMockRecords();
-  const completedRecordCount = 2 * PLANETS[0].recordsNeeded;
+  let consumedRecords = 0;
+  const completedPlanets: CompletedPlanet[] = [];
+
+  for (let planetIndex = 0; planetIndex < PLANETS.length - 1; planetIndex += 1) {
+    const planet = PLANETS[planetIndex];
+    const start = consumedRecords;
+    const end = start + planet.recordsNeeded;
+    const planetRecords = records.slice(start, end);
+
+    if (planetRecords.length < planet.recordsNeeded) break;
+
+    completedPlanets.push({
+      planetIndex,
+      completedDate: planetRecords[planetRecords.length - 1]?.date ?? formatDateKey(new Date()),
+      recordCount: planet.recordsNeeded,
+      dominantEmotion: getDominantEmotion(planetRecords),
+      equippedAccessories: {
+        ...EMPTY_EQUIPPED,
+        ...(planetIndex === 1 ? { hat: "star-band", ring: "gold-star-effect" } : {}),
+        ...(planetIndex === 2 ? { hat: "sprout", ring: "aqua-nebula-effect" } : {}),
+        ...(planetIndex === 3 ? { hat: "crown", ring: "meteor-spark-effect" } : {})
+      }
+    });
+    consumedRecords = end;
+  }
+
+  const currentPlanetIndex = Math.min(completedPlanets.length, PLANETS.length - 1);
 
   return {
     points: 680,
     currentStreak: calculateStreak(records, new Date(2026, 4, 4)),
     longestStreak: 14,
     records,
-    completedPlanets: [
-      {
-        planetIndex: 0,
-        completedDate: "2026-03-18",
-        recordCount: 30,
-        dominantEmotion: "tired",
-        equippedAccessories: { ...EMPTY_EQUIPPED }
-      },
-      {
-        planetIndex: 1,
-        completedDate: "2026-04-20",
-        recordCount: 30,
-        dominantEmotion: "calm",
-        equippedAccessories: { ...EMPTY_EQUIPPED, hat: "star-band", ring: "star-ring" }
-      }
-    ],
-    currentPlanetIndex: 2,
-    currentPlanetRecords: Math.max(0, records.length - completedRecordCount),
+    completedPlanets,
+    currentPlanetIndex,
+    currentPlanetRecords: Math.min(
+      PLANETS[currentPlanetIndex].recordsNeeded,
+      Math.max(0, records.length - consumedRecords)
+    ),
     ownedAccessories: [
       "crown",
       "cat-ears",
-      "sneakers",
-      "star-ring",
+      "gold-star-effect",
       "star-band",
-      "glow-ring",
+      "aqua-nebula-effect",
+      "violet-galaxy-effect",
+      "aurora-leaf-effect",
+      "meteor-spark-effect",
       "sprout",
       "classic-deep-bg",
       "purple-galaxy-bg",
@@ -148,8 +175,7 @@ export const createInitialState = (): EmotionPlanetState => {
     equippedAccessories: {
       ...EMPTY_EQUIPPED,
       hat: "crown",
-      shoes: "sneakers",
-      ring: "glow-ring",
+      ring: "aqua-nebula-effect",
       background: "cosmic-vortex-bg"
     }
   };
