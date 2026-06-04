@@ -96,19 +96,12 @@ export function ShopPage({ navigate }: ShopPageProps) {
       </header>
 
       <section className="shop-preview-panel">
-        <div className="shop-preview-copy">
-          <span className="pixel-label">꾸미기 미리보기</span>
-          <strong>{planet.name}</strong>
-          <p>
-            {equippedItem
-              ? `${CATEGORY_LABELS[category]}: ${equippedItem.name}`
-              : `${CATEGORY_LABELS[category]} 슬롯이 비어 있어요`}
-          </p>
-          <button className="mini-button" type="button" onClick={openCustomize}>
-            직접 꾸미기
-          </button>
+        <div className="shop-preview-planet">
+          <PlanetAvatar planet={planet} emotion={previewEmotion} equipped={equippedAccessories} size={160} animate />
         </div>
-        <PlanetAvatar planet={planet} emotion={previewEmotion} equipped={equippedAccessories} size={142} animate />
+        <button className="mini-button shop-preview-btn" type="button" onClick={openCustomize}>
+          직접 꾸미기
+        </button>
       </section>
 
       <section className="panel">
