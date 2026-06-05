@@ -62,16 +62,12 @@ export const ACCESSORIES: Accessory[] = [
   { id: "heart-dream-effect", name: "하트 드림 이펙트", category: "ring", price: 140, col: 7, row: 5, rarity: "epic" },
   { id: "classic-deep-bg", name: "클래식 심우주 배경", category: "background", price: 100, col: 0, row: 6, rarity: "common" },
   { id: "purple-galaxy-bg", name: "보라 은하 배경", category: "background", price: 140, col: 1, row: 6, rarity: "epic" },
-  { id: "cyan-nebula-bg", name: "시안 성운 배경", category: "background", price: 130, col: 2, row: 6, rarity: "rare" },
   { id: "green-aurora-bg", name: "녹색 오로라 배경", category: "background", price: 140, col: 3, row: 6, rarity: "epic" },
-  { id: "red-mars-bg", name: "화성의 밤 배경", category: "background", price: 120, col: 4, row: 6, rarity: "rare" },
-  { id: "golden-star-bg", name: "황금 별밭 배경", category: "background", price: 150, col: 5, row: 6, rarity: "epic" },
-  { id: "pink-dream-bg", name: "핑크 드림 배경", category: "background", price: 130, col: 6, row: 6, rarity: "rare" },
-  { id: "blue-crystal-bg", name: "블루 크리스탈 배경", category: "background", price: 160, col: 7, row: 6, rarity: "legendary" },
   { id: "meteor-shower-bg", name: "유성우 배경", category: "background", price: 170, col: 0, row: 7, rarity: "legendary" },
-  { id: "moon-bg", name: "달밤 배경", category: "background", price: 110, col: 1, row: 7, rarity: "rare" },
-  { id: "cosmic-vortex-bg", name: "코스믹 소용돌이 배경", category: "background", price: 180, col: 2, row: 7, rarity: "legendary" },
-  { id: "distant-planets-bg", name: "먼 행성 배경", category: "background", price: 160, col: 3, row: 7, rarity: "epic" }
+  { id: "rainy-window-bg", name: "비 오는 창가", category: "background", price: 130, col: 6, row: 7, rarity: "rare" },
+  { id: "moon-cloud-palace-bg", name: "달빛 구름 궁전", category: "background", price: 220, col: 0, row: 0, rarity: "legendary" },
+  { id: "crystal-garden-hall-bg", name: "크리스탈 정원방", category: "background", price: 190, col: 0, row: 0, rarity: "epic" },
+  { id: "star-observatory-room-bg", name: "별빛 전망대", category: "background", price: 220, col: 0, row: 0, rarity: "legendary" }
 ];
 
 export const ACCESSORY_BY_ID = Object.fromEntries(

@@ -7,6 +7,7 @@ import {
   RARITY_LABELS
 } from "../data/accessories";
 import { EMOTIONS } from "../data/emotions";
+import { getSpaceBackgroundUrl } from "../data/backgrounds";
 import { PLANETS } from "../data/planets";
 import { AccessorySprite } from "../components/planet/AccessorySprite";
 import { PlanetAvatar } from "../components/planet/PlanetAvatar";
@@ -33,10 +34,18 @@ export function ShopPage({ navigate }: ShopPageProps) {
   } = useEmotionPlanet();
   const [category, setCategory] = useState<AccessoryCategory>(getRememberedAccessoryCategory);
   const [toast, setToast] = useState<string | null>(null);
+  const [previewItemId, setPreviewItemId] = useState<string | null>(null);
   const items = ACCESSORIES.filter((item) => item.category === category);
   const planet = PLANETS[viewingPlanetIndex];
   const isViewingCurrent = viewingPlanetIndex === state.currentPlanetIndex;
   const equippedAccessories = getEquippedForPlanet(viewingPlanetIndex);
+  const previewItem = previewItemId ? ACCESSORIES.find((item) => item.id === previewItemId) ?? null : null;
+  const previewEquipped = previewItem
+    ? { ...equippedAccessories, [previewItem.category]: previewItem.id }
+    : equippedAccessories;
+  const previewBackgroundUrl = previewItem?.category === "background"
+    ? getSpaceBackgroundUrl(previewItem.id)
+    : undefined;
   const previewEmotion = getDominantEmotion(getPlanetRecords(viewingPlanetIndex));
   const equippedItem = equippedAccessories[category]
     ? ACCESSORIES.find((item) => item.id === equippedAccessories[category])
@@ -56,6 +65,7 @@ export function ShopPage({ navigate }: ShopPageProps) {
     if (isViewingCurrent) equipAccessory(item.id, item.category);
     else equipAccessoryForPlanet(viewingPlanetIndex, item.id, item.category);
 
+    setPreviewItemId(null);
     showToast(`${item.name} 구매 후 적용!`);
   };
 
@@ -69,6 +79,7 @@ export function ShopPage({ navigate }: ShopPageProps) {
 
     if (isViewingCurrent) equipAccessory(item.id, item.category);
     else equipAccessoryForPlanet(viewingPlanetIndex, item.id, item.category);
+    setPreviewItemId(null);
     showToast(`${item.name} 적용!`);
   };
 
@@ -80,6 +91,7 @@ export function ShopPage({ navigate }: ShopPageProps) {
   const selectCategory = (nextCategory: AccessoryCategory) => {
     rememberAccessoryCategory(nextCategory);
     setCategory(nextCategory);
+    setPreviewItemId(null);
   };
 
   return (
@@ -95,9 +107,25 @@ export function ShopPage({ navigate }: ShopPageProps) {
         </div>
       </header>
 
-      <section className="shop-preview-panel">
+      <section
+        className={`shop-preview-panel${previewItem ? " previewing" : ""}`}
+        style={previewBackgroundUrl ? {
+          backgroundImage: `linear-gradient(rgba(4,5,16,0.22), rgba(4,5,16,0.38)), url('${previewBackgroundUrl}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        } : undefined}
+      >
+        {previewItem ? (
+          <div className="shop-preview-status">
+            <span>미리보기</span>
+            <strong>{previewItem.name}</strong>
+            <button type="button" onClick={() => setPreviewItemId(null)}>
+              원래대로
+            </button>
+          </div>
+        ) : null}
         <div className="shop-preview-planet">
-          <PlanetAvatar planet={planet} emotion={previewEmotion} equipped={equippedAccessories} size={160} animate />
+          <PlanetAvatar planet={planet} emotion={previewEmotion} equipped={previewEquipped} size={160} animate />
         </div>
         <button className="mini-button shop-preview-btn" type="button" onClick={openCustomize}>
           직접 꾸미기
@@ -155,6 +183,8 @@ export function ShopPage({ navigate }: ShopPageProps) {
               owned={owned}
               equipped={equipped}
               canBuy={state.points >= item.price}
+              previewing={previewItem?.id === item.id}
+              onPreview={() => setPreviewItemId(item.id)}
               onBuy={() => handleBuy(item)}
               onEquip={() => handleEquip(item)}
             />
@@ -172,6 +202,8 @@ function ShopItemCard({
   owned,
   equipped,
   canBuy,
+  previewing,
+  onPreview,
   onBuy,
   onEquip
 }: {
@@ -179,16 +211,18 @@ function ShopItemCard({
   owned: boolean;
   equipped: boolean;
   canBuy: boolean;
+  previewing: boolean;
+  onPreview: () => void;
   onBuy: () => void;
   onEquip: () => void;
 }) {
   const rarityColor = RARITY_COLORS[item.rarity];
 
   return (
-    <article className={`shop-item-card${equipped ? " equipped" : ""}${owned ? " owned" : ""}`}>
+    <article className={`shop-item-card${equipped ? " equipped" : ""}${owned ? " owned" : ""}${previewing ? " previewing" : ""}`}>
       <div className="shop-item-art">
         <AccessorySprite id={item.id} size={54} />
-        {equipped ? <span className="equipped-check">✓</span> : null}
+        {previewing ? <span className="preview-check">보기</span> : equipped ? <span className="equipped-check">✓</span> : null}
       </div>
       <span className="rarity-badge" style={{ color: rarityColor, borderColor: `${rarityColor}77` }}>
         {RARITY_LABELS[item.rarity]}
@@ -197,15 +231,20 @@ function ShopItemCard({
       <small className="shop-item-state">
         {equipped ? "현재 적용" : owned ? "보유 중" : `${item.price.toLocaleString()}pt`}
       </small>
-      {owned ? (
-        <button className="mini-button full" type="button" onClick={onEquip}>
-          {equipped ? "해제" : "적용"}
+      <div className="shop-item-actions">
+        <button className="mini-button ghost" type="button" onClick={onPreview}>
+          {previewing ? "보는 중" : "미리보기"}
         </button>
-      ) : (
-        <button className="mini-button full" type="button" disabled={!canBuy} onClick={onBuy}>
-          {canBuy ? "구매+적용" : "포인트 부족"}
-        </button>
-      )}
+        {owned ? (
+          <button className="mini-button full" type="button" onClick={onEquip}>
+            {equipped ? "해제" : "적용"}
+          </button>
+        ) : (
+          <button className="mini-button full" type="button" disabled={!canBuy} onClick={onBuy}>
+            {canBuy ? "구매+적용" : "포인트 부족"}
+          </button>
+        )}
+      </div>
     </article>
   );
 }

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { getSpaceBackgroundUrl } from "../../data/backgrounds";
 import { useEmotionPlanet } from "../../state/EmotionPlanetProvider";
 import type { RoutePath } from "../../types";
@@ -18,17 +18,18 @@ export function AppShell({ route, navigate, children }: AppShellProps) {
       : state.currentPlanetIndex;
   const equipped = getEquippedForPlanet(backgroundPlanetIndex);
   const backgroundUrl = getSpaceBackgroundUrl(equipped.background);
+  const frameStyle = backgroundUrl
+    ? ({
+        "--app-frame-background": `linear-gradient(rgba(4,5,16,0.18), rgba(4,5,16,0.34)), url('${backgroundUrl}')`
+      } as CSSProperties)
+    : undefined;
 
   return (
     <div className="app-root">
       <div className="desktop-starfield" />
       <main
-        className="app-frame"
-        style={{
-          backgroundImage: backgroundUrl
-            ? `linear-gradient(rgba(4,5,16,0.08), rgba(4,5,16,0.18)), url('${backgroundUrl}')`
-            : undefined
-        }}
+        className={`app-frame${backgroundUrl ? " has-background" : ""}`}
+        style={frameStyle}
       >
         <div className="page-content">{children}</div>
         <BottomNav activeRoute={route} navigate={navigate} />

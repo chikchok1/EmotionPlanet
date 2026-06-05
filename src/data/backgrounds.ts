@@ -1,19 +1,17 @@
+const space = (filename: string) => `/figma-assets/space_backgrounds_1080x1920/${filename}`;
+const lifestyle = (filename: string) => `/figma-assets/lifestyle_backgrounds_1080x1920/${filename}`;
+
 export const SPACE_BACKGROUNDS: Record<string, string> = {
-  "classic-deep-bg": "01_classic_deep_space.png",
-  "purple-galaxy-bg": "02_purple_galaxy.png",
-  "cyan-nebula-bg": "03_cyan_nebula.png",
-  "green-aurora-bg": "04_green_aurora_space.png",
-  "red-mars-bg": "05_red_mars_night.png",
-  "golden-star-bg": "06_golden_star_field.png",
-  "pink-dream-bg": "07_pink_dream_space.png",
-  "blue-crystal-bg": "08_blue_crystal_space.png",
-  "meteor-shower-bg": "09_meteor_shower.png",
-  "moon-bg": "10_moonlit_space.png",
-  "cosmic-vortex-bg": "11_cosmic_vortex.png",
-  "distant-planets-bg": "12_distant_planets.png"
+  "classic-deep-bg": space("01_classic_deep_space.png"),
+  "purple-galaxy-bg": space("02_purple_galaxy.png"),
+  "green-aurora-bg": space("04_green_aurora_space.png"),
+  "meteor-shower-bg": space("09_meteor_shower.png"),
+  "rainy-window-bg": lifestyle("03_rainy_window_room.png"),
+  "moon-cloud-palace-bg": lifestyle("05_moon_cloud_palace.png"),
+  "crystal-garden-hall-bg": lifestyle("06_crystal_garden_hall.png"),
+  "star-observatory-room-bg": lifestyle("07_star_observatory_room.png")
 };
 
 export const getSpaceBackgroundUrl = (id?: string | null) => {
-  const filename = id ? SPACE_BACKGROUNDS[id] : undefined;
-  return `/figma-assets/space_backgrounds_1080x1920/${filename ?? SPACE_BACKGROUNDS["cosmic-vortex-bg"]}`;
+  return id && SPACE_BACKGROUNDS[id] ? SPACE_BACKGROUNDS[id] : undefined;
 };

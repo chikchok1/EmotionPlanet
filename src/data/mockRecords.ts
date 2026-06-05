@@ -158,25 +158,12 @@ export const createInitialState = (): EmotionPlanetState => {
       "violet-galaxy-effect",
       "aurora-leaf-effect",
       "meteor-spark-effect",
-      "sprout",
-      "classic-deep-bg",
-      "purple-galaxy-bg",
-      "cyan-nebula-bg",
-      "green-aurora-bg",
-      "red-mars-bg",
-      "golden-star-bg",
-      "pink-dream-bg",
-      "blue-crystal-bg",
-      "meteor-shower-bg",
-      "moon-bg",
-      "cosmic-vortex-bg",
-      "distant-planets-bg"
+      "sprout"
     ],
     equippedAccessories: {
       ...EMPTY_EQUIPPED,
       hat: "crown",
-      ring: "aqua-nebula-effect",
-      background: "cosmic-vortex-bg"
+      ring: "aqua-nebula-effect"
     }
   };
 };

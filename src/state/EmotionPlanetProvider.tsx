@@ -20,7 +20,7 @@ import type {
   EquippedAccessories
 } from "../types";
 
-const STORAGE_KEY = "emotionPlanet_v2";
+const STORAGE_KEY = "emotionPlanet_v3";
 
 type EmotionPlanetContextValue = {
   state: EmotionPlanetState;
@@ -44,6 +44,11 @@ const EmotionPlanetContext = createContext<EmotionPlanetContextValue | null>(nul
 const normalizeAccessoryId = (id: string | null | undefined) =>
   id ? (LEGACY_ACCESSORY_ID_MAP[id] ?? id) : null;
 
+const normalizeKnownAccessoryId = (id: string | null | undefined) => {
+  const normalizedId = normalizeAccessoryId(id);
+  return normalizedId && ACCESSORY_BY_ID[normalizedId] ? normalizedId : null;
+};
+
 const normalizeEquipped = (value?: Partial<EquippedAccessories> | null): EquippedAccessories => {
   const next = {
     ...EMPTY_EQUIPPED,
@@ -51,14 +56,22 @@ const normalizeEquipped = (value?: Partial<EquippedAccessories> | null): Equippe
   };
 
   return {
-    ...next,
-    ring: normalizeAccessoryId(next.ring)
+    hat: normalizeKnownAccessoryId(next.hat),
+    face: normalizeKnownAccessoryId(next.face),
+    ring: normalizeKnownAccessoryId(next.ring),
+    background: normalizeKnownAccessoryId(next.background)
   };
 };
 
 const normalizeOwnedAccessories = (value: unknown, fallback: string[]) => {
   const source = Array.isArray(value) ? value : fallback;
-  return Array.from(new Set(source.map((id) => LEGACY_ACCESSORY_ID_MAP[id] ?? id)));
+  return Array.from(
+    new Set(
+      source
+        .map((id) => normalizeKnownAccessoryId(typeof id === "string" ? id : null))
+        .filter((id): id is string => Boolean(id))
+    )
+  );
 };
 
 const numberOr = (value: unknown, fallback: number) =>
