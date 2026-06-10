@@ -1,8 +1,10 @@
 import { useMemo, useState, type CSSProperties } from "react";
 import { EMOTIONS, EMOTION_BY_ID } from "../data/emotions";
+import { PLANETS } from "../data/planets";
 import { useEmotionPlanet } from "../state/EmotionPlanetProvider";
+import { getEmotionPlanetImage } from "../utils/emotionPlanetImage";
 import { countEmotions } from "../utils/planet";
-import type { EmotionRecord } from "../types";
+import type { EmotionRecord, Planet } from "../types";
 
 const WEEK_DAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -49,6 +51,7 @@ const groupRecordsByDate = (records: EmotionRecord[]) =>
 
 export function HistoryPage() {
   const { state } = useEmotionPlanet();
+  const currentPlanet = PLANETS[state.currentPlanetIndex];
   const sortedRecords = useMemo(
     () => [...state.records].sort((a, b) => a.date.localeCompare(b.date)),
     [state.records]
@@ -157,7 +160,7 @@ export function HistoryPage() {
                 <span className="calendar-day-number">{date.getDate()}</span>
                 {emotion ? (
                   <span className="calendar-emotion-mark">
-                    <img src={emotion.planetImage} alt="" />
+                    <img src={getEmotionPlanetImage(currentPlanet, emotion.id, emotion.planetImage)} alt="" />
                   </span>
                 ) : (
                   <span className="calendar-empty-mark" />
@@ -179,7 +182,7 @@ export function HistoryPage() {
           </div>
           {selectedEmotion ? (
             <span className="selected-emotion-pill" style={{ color: selectedEmotion.color } as CSSProperties}>
-              <img src={selectedEmotion.planetImage} alt="" />
+              <img src={getEmotionPlanetImage(currentPlanet, selectedEmotion.id, selectedEmotion.planetImage)} alt="" />
               {selectedEmotion.name}
             </span>
           ) : (
@@ -197,7 +200,7 @@ export function HistoryPage() {
                   key={record.id}
                   style={{ "--record-accent": emotion.color } as CSSProperties}
                 >
-                  <RecordThumb record={record} />
+                  <RecordThumb record={record} planet={currentPlanet} />
                   <div>
                     <strong style={{ color: emotion.color }}>{emotion.name}</strong>
                     {record.comment ? <p>{record.comment}</p> : <p>감정만 기록</p>}
@@ -241,7 +244,11 @@ export function HistoryPage() {
           {monthSummary.map(({ emotion, count, ratio }) => (
             <div className="month-emotion-row" key={emotion.id}>
               <div className="history-bar-planet">
-                <img src={emotion.planetImage} alt={emotion.name} className="history-bar-planet-img" />
+                <img
+                  src={getEmotionPlanetImage(currentPlanet, emotion.id, emotion.planetImage)}
+                  alt={emotion.name}
+                  className="history-bar-planet-img"
+                />
               </div>
               <div className="month-emotion-track">
                 <span style={{ color: emotion.color }}>{emotion.name}</span>
@@ -258,13 +265,13 @@ export function HistoryPage() {
   );
 }
 
-function RecordThumb({ record }: { record: EmotionRecord }) {
+function RecordThumb({ record, planet }: { record: EmotionRecord; planet: Planet }) {
   const emotion = EMOTION_BY_ID[record.emotion];
 
   return (
     <div className="record-planet-thumb">
       <img
-        src={emotion.planetImage}
+        src={getEmotionPlanetImage(planet, emotion.id, emotion.planetImage)}
         alt={emotion.name}
         className="record-planet-img"
         onError={(event) => {

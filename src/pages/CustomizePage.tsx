@@ -5,6 +5,7 @@ import { AccessorySprite } from "../components/planet/AccessorySprite";
 import { PlanetAvatar } from "../components/planet/PlanetAvatar";
 import { useEmotionPlanet } from "../state/EmotionPlanetProvider";
 import { getRememberedAccessoryCategory, rememberAccessoryCategory } from "../utils/accessoryCategory";
+import { getLatestEmotion } from "../utils/planet";
 import type { Accessory, AccessoryCategory, RoutePath } from "../types";
 
 type CustomizePageProps = {
@@ -12,12 +13,13 @@ type CustomizePageProps = {
 };
 
 export function CustomizePage({ navigate }: CustomizePageProps) {
-  const { state, equipAccessory, unequipAccessory, equipAccessoryForPlanet, unequipAccessoryForPlanet, getEquippedForPlanet, getDominantEmotion, getPlanetRecords, viewingPlanetIndex } = useEmotionPlanet();
+  const { state, equipAccessory, unequipAccessory, equipAccessoryForPlanet, unequipAccessoryForPlanet, getEquippedForPlanet, getDominantEmotion, getPlanetRecords, getTodayRecord, viewingPlanetIndex } = useEmotionPlanet();
   const [category, setCategory] = useState<AccessoryCategory>(getRememberedAccessoryCategory);
   const [toast, setToast] = useState<string | null>(null);
   const isViewingCurrent = viewingPlanetIndex === state.currentPlanetIndex;
   const planet = PLANETS[viewingPlanetIndex];
-  const emotion = getDominantEmotion(getPlanetRecords(viewingPlanetIndex));
+  const planetRecords = getPlanetRecords(viewingPlanetIndex);
+  const emotion = getTodayRecord()?.emotion ?? getLatestEmotion(planetRecords, getDominantEmotion(planetRecords));
   const equippedAccessories = getEquippedForPlanet(viewingPlanetIndex);
   const ownedItems = ACCESSORIES.filter(
     (item) => item.category === category && state.ownedAccessories.includes(item.id)
@@ -147,7 +149,7 @@ export function CustomizePage({ navigate }: CustomizePageProps) {
                 type="button"
                 onClick={() => toggleItem(item)}
               >
-                <AccessorySprite id={item.id} size={56} />
+                <AccessorySprite id={item.id} size={item.category === "ring" ? 70 : 56} />
                 <span className="rarity-badge" style={{ color: rarityColor, borderColor: `${rarityColor}77` }}>
                   {RARITY_LABELS[item.rarity]}
                 </span>

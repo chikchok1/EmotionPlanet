@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   ACCESSORIES,
   ACCESSORY_CATEGORIES,
@@ -9,10 +9,13 @@ import {
 import { EMOTIONS } from "../data/emotions";
 import { getSpaceBackgroundUrl } from "../data/backgrounds";
 import { PLANETS } from "../data/planets";
+import { DailyAdRewardButton } from "../components/layout/DailyAdRewardButton";
 import { AccessorySprite } from "../components/planet/AccessorySprite";
 import { PlanetAvatar } from "../components/planet/PlanetAvatar";
 import { useEmotionPlanet } from "../state/EmotionPlanetProvider";
 import { getRememberedAccessoryCategory, rememberAccessoryCategory } from "../utils/accessoryCategory";
+import { getEmotionPlanetImage } from "../utils/emotionPlanetImage";
+import { getLatestEmotion } from "../utils/planet";
 import type { Accessory, AccessoryCategory, RoutePath } from "../types";
 
 type ShopPageProps = {
@@ -30,11 +33,14 @@ export function ShopPage({ navigate }: ShopPageProps) {
     unequipAccessoryForPlanet,
     getEquippedForPlanet,
     getDominantEmotion,
-    getPlanetRecords
+    getPlanetRecords,
+    getTodayRecord,
+    setPreviewBackground
   } = useEmotionPlanet();
   const [category, setCategory] = useState<AccessoryCategory>(getRememberedAccessoryCategory);
   const [toast, setToast] = useState<string | null>(null);
   const [previewItemId, setPreviewItemId] = useState<string | null>(null);
+  const previewPanelRef = useRef<HTMLElement | null>(null);
   const items = ACCESSORIES.filter((item) => item.category === category);
   const planet = PLANETS[viewingPlanetIndex];
   const isViewingCurrent = viewingPlanetIndex === state.currentPlanetIndex;
@@ -46,10 +52,16 @@ export function ShopPage({ navigate }: ShopPageProps) {
   const previewBackgroundUrl = previewItem?.category === "background"
     ? getSpaceBackgroundUrl(previewItem.id)
     : undefined;
-  const previewEmotion = getDominantEmotion(getPlanetRecords(viewingPlanetIndex));
+  const planetRecords = getPlanetRecords(viewingPlanetIndex);
+  const previewEmotion = getTodayRecord()?.emotion ?? getLatestEmotion(planetRecords, getDominantEmotion(planetRecords));
   const equippedItem = equippedAccessories[category]
     ? ACCESSORIES.find((item) => item.id === equippedAccessories[category])
     : null;
+
+  useEffect(() => {
+    setPreviewBackground(previewItem?.category === "background" ? previewItem.id : null);
+    return () => setPreviewBackground(null);
+  }, [previewItem, setPreviewBackground]);
 
   const showToast = (message: string) => {
     setToast(message);
@@ -94,6 +106,13 @@ export function ShopPage({ navigate }: ShopPageProps) {
     setPreviewItemId(null);
   };
 
+  const previewAccessory = (item: Accessory) => {
+    setPreviewItemId(item.id);
+    window.requestAnimationFrame(() => {
+      previewPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  };
+
   return (
     <div className="screen-stack shop-screen">
       <header className="top-bar">
@@ -101,19 +120,21 @@ export function ShopPage({ navigate }: ShopPageProps) {
           <h1 className="screen-title">꾸미기 상점</h1>
           <p>감정 기록으로 포인트를 모아요</p>
         </div>
-        <div className="point-pill">
-          <span>⭐</span>
-          {state.points.toLocaleString()}pt
+        <div className="top-actions">
+          <div className="point-pill">
+            <span>⭐</span>
+            {state.points.toLocaleString()}pt
+          </div>
+          <DailyAdRewardButton />
         </div>
       </header>
 
       <section
-        className={`shop-preview-panel${previewItem ? " previewing" : ""}`}
+        ref={previewPanelRef}
+        className={`shop-preview-panel${previewItem ? " previewing" : ""}${previewBackgroundUrl ? " has-preview-background" : ""}`}
         style={previewBackgroundUrl ? {
-          backgroundImage: `linear-gradient(rgba(4,5,16,0.22), rgba(4,5,16,0.38)), url('${previewBackgroundUrl}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center"
-        } : undefined}
+          "--shop-preview-background": `url('${previewBackgroundUrl}')`
+        } as CSSProperties : undefined}
       >
         {previewItem ? (
           <div className="shop-preview-status">
@@ -139,7 +160,7 @@ export function ShopPage({ navigate }: ShopPageProps) {
             <div className="point-guide-item" key={emotion.id}>
               <div className="point-guide-planet">
                 <img
-                  src={emotion.planetImage}
+                  src={getEmotionPlanetImage(planet, emotion.id, emotion.planetImage)}
                   alt={emotion.name}
                   className="point-guide-planet-img"
                   onError={(e) => {
@@ -184,7 +205,7 @@ export function ShopPage({ navigate }: ShopPageProps) {
               equipped={equipped}
               canBuy={state.points >= item.price}
               previewing={previewItem?.id === item.id}
-              onPreview={() => setPreviewItemId(item.id)}
+              onPreview={() => previewAccessory(item)}
               onBuy={() => handleBuy(item)}
               onEquip={() => handleEquip(item)}
             />
@@ -221,7 +242,7 @@ function ShopItemCard({
   return (
     <article className={`shop-item-card${equipped ? " equipped" : ""}${owned ? " owned" : ""}${previewing ? " previewing" : ""}`}>
       <div className="shop-item-art">
-        <AccessorySprite id={item.id} size={54} />
+        <AccessorySprite id={item.id} size={item.category === "ring" ? 70 : 54} />
         {previewing ? <span className="preview-check">보기</span> : equipped ? <span className="equipped-check">✓</span> : null}
       </div>
       <span className="rarity-badge" style={{ color: rarityColor, borderColor: `${rarityColor}77` }}>

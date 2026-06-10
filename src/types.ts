@@ -28,6 +28,7 @@ export type Planet = {
   baseImage: string;
   planetImage: string;
   effectImage?: string;
+  emotionImages?: Record<EmotionId, string>;
 };
 
 export type Emotion = {
@@ -71,6 +72,7 @@ export type CompletedPlanet = {
 
 export type EmotionPlanetState = {
   points: number;
+  lastAdRewardDate: string | null;
   currentStreak: number;
   longestStreak: number;
   records: EmotionRecord[];

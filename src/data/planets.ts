@@ -2,6 +2,16 @@ import type { Planet } from "../types";
 
 const asset = (filename: string) => `/figma-assets/${filename}`;
 const planetImage = (filename: string) => asset(`planet_image/${filename}`);
+const emotionPlanet = (planetId: Planet["id"], emotionId: keyof NonNullable<Planet["emotionImages"]>) =>
+  asset(`emotion_planets/${planetId}_${emotionId}.png`);
+const emotionPlanets = (planetId: Planet["id"]): NonNullable<Planet["emotionImages"]> => ({
+  joy: emotionPlanet(planetId, "joy"),
+  calm: emotionPlanet(planetId, "calm"),
+  excited: emotionPlanet(planetId, "excited"),
+  tired: emotionPlanet(planetId, "tired"),
+  sad: emotionPlanet(planetId, "sad"),
+  angry: emotionPlanet(planetId, "angry")
+});
 
 export const PLANETS: Planet[] = [
   {
@@ -14,7 +24,8 @@ export const PLANETS: Planet[] = [
     description: "태양에 가장 가까운 작은 행성",
     baseImage: asset("mercury_base.png"),
     effectImage: asset("mercury_effect_glow.png"),
-    planetImage: planetImage("mercury.png")
+    planetImage: planetImage("mercury.png"),
+    emotionImages: emotionPlanets("mercury")
   },
   {
     id: "venus",
@@ -26,7 +37,8 @@ export const PLANETS: Planet[] = [
     description: "황금빛으로 빛나는 아름다운 행성",
     baseImage: asset("venus_base.png"),
     effectImage: asset("venus_effect_glow.png"),
-    planetImage: planetImage("venus.png")
+    planetImage: planetImage("venus.png"),
+    emotionImages: emotionPlanets("venus")
   },
   {
     id: "earth",
@@ -38,7 +50,8 @@ export const PLANETS: Planet[] = [
     description: "생명이 가득한 파란 행성",
     baseImage: asset("earth_base.png"),
     effectImage: asset("earth_effect_sparkles.png"),
-    planetImage: planetImage("earth.png")
+    planetImage: planetImage("earth.png"),
+    emotionImages: emotionPlanets("earth")
   },
   {
     id: "mars",
@@ -50,7 +63,8 @@ export const PLANETS: Planet[] = [
     description: "붉은 대지의 신비로운 행성",
     baseImage: asset("mars_base.png"),
     effectImage: asset("mars_effect_glow.png"),
-    planetImage: planetImage("Mars.png")
+    planetImage: planetImage("Mars.png"),
+    emotionImages: emotionPlanets("mars")
   },
   {
     id: "jupiter",
@@ -62,7 +76,8 @@ export const PLANETS: Planet[] = [
     description: "태양계에서 가장 거대한 행성",
     baseImage: asset("jupiter_base.png"),
     effectImage: asset("jupiter_effect_glow.png"),
-    planetImage: planetImage("Jupiter.png")
+    planetImage: planetImage("Jupiter.png"),
+    emotionImages: emotionPlanets("jupiter")
   },
   {
     id: "saturn",
@@ -74,7 +89,8 @@ export const PLANETS: Planet[] = [
     description: "아름다운 고리를 가진 행성",
     baseImage: asset("saturn_base.png"),
     effectImage: asset("saturn_effect_glow.png"),
-    planetImage: planetImage("Saturn.png")
+    planetImage: planetImage("Saturn.png"),
+    emotionImages: emotionPlanets("saturn")
   },
   {
     id: "uranus",
@@ -86,7 +102,8 @@ export const PLANETS: Planet[] = [
     description: "신비로운 청록빛 행성",
     baseImage: asset("uranus_base.png"),
     effectImage: asset("uranus_effect_glow.png"),
-    planetImage: planetImage("Uranus.png")
+    planetImage: planetImage("Uranus.png"),
+    emotionImages: emotionPlanets("uranus")
   },
   {
     id: "neptune",
@@ -98,7 +115,8 @@ export const PLANETS: Planet[] = [
     description: "가장 멀리 있는 깊은 파란 행성",
     baseImage: asset("neptune_base.png"),
     effectImage: asset("neptune_effect_glow.png"),
-    planetImage: planetImage("neptune.png")
+    planetImage: planetImage("neptune.png"),
+    emotionImages: emotionPlanets("neptune")
   },
   {
     id: "pluto",
@@ -110,6 +128,7 @@ export const PLANETS: Planet[] = [
     description: "작지만 차분하게 빛나는 외곽 행성",
     baseImage: asset("pluto_base.png"),
     effectImage: asset("pluto_effect_glow.png"),
-    planetImage: planetImage("Pluto.png")
+    planetImage: planetImage("Pluto.png"),
+    emotionImages: emotionPlanets("pluto")
   }
 ];

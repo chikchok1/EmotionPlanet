@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import { EMOTIONS, EMOTION_BY_ID } from "../data/emotions";
 import { PLANETS } from "../data/planets";
+import { DailyAdRewardButton } from "../components/layout/DailyAdRewardButton";
 import { PlanetAvatar } from "../components/planet/PlanetAvatar";
 import { useEmotionPlanet } from "../state/EmotionPlanetProvider";
 import type { EmotionId, RoutePath } from "../types";
+import { getEmotionPlanetImage } from "../utils/emotionPlanetImage";
 import { formatDisplayDate, getCurrentStage, getPlanetMilestones } from "../utils/planet";
 
 type HomePageProps = {
@@ -59,10 +61,13 @@ export function HomePage({ navigate }: HomePageProps) {
       <div className="screen-stack home-screen">
         <header className="top-bar">
           <span className="pixel-date">{formatDisplayDate()}</span>
-          <button className="point-pill" type="button" onClick={() => navigate("/shop")}>
-            <span>⭐</span>
-            {state.points.toLocaleString()}pt
-          </button>
+          <div className="top-actions">
+            <button className="point-pill" type="button" onClick={() => navigate("/shop")}>
+              <span>⭐</span>
+              {state.points.toLocaleString()}pt
+            </button>
+            <DailyAdRewardButton />
+          </div>
         </header>
 
         <div className="done-screen">
@@ -79,7 +84,7 @@ export function HomePage({ navigate }: HomePageProps) {
                 planet={currentPlanet}
                 emotion={displayedEmotion}
                 equipped={state.equippedAccessories}
-                size={170}
+                size={142}
                 animate
               />
             </div>
@@ -103,7 +108,7 @@ export function HomePage({ navigate }: HomePageProps) {
             {/* 이모지 → 행성 이미지 */}
             <div className="done-chip-planet">
               <img
-                src={completionCard.emotion.planetImage}
+                src={getEmotionPlanetImage(currentPlanet, completionCard.emotion.id, completionCard.emotion.planetImage)}
                 alt={completionCard.emotion.name}
                 className="done-chip-planet-img"
                 onError={(e) => {
@@ -195,10 +200,13 @@ export function HomePage({ navigate }: HomePageProps) {
     <div className="screen-stack home-screen">
       <header className="top-bar">
         <span className="pixel-date">{formatDisplayDate()}</span>
-        <button className="point-pill" type="button" onClick={() => navigate("/shop")}>
-          <span>⭐</span>
-          {state.points.toLocaleString()}pt
-        </button>
+        <div className="top-actions">
+          <button className="point-pill" type="button" onClick={() => navigate("/shop")}>
+            <span>⭐</span>
+            {state.points.toLocaleString()}pt
+          </button>
+          <DailyAdRewardButton />
+        </div>
       </header>
 
       <section className="hero-planet" onClick={() => navigate("/planet")}>
@@ -206,7 +214,7 @@ export function HomePage({ navigate }: HomePageProps) {
           planet={currentPlanet}
           emotion={displayedEmotion}
           equipped={state.equippedAccessories}
-          size={180}
+          size={164}
           animate
         />
         <div className="planet-title-row">
@@ -261,7 +269,7 @@ export function HomePage({ navigate }: HomePageProps) {
                   <div className="emotion-planet-img-wrap">
                     <img
                       className="emotion-planet-img"
-                      src={emotion.planetImage}
+                      src={getEmotionPlanetImage(currentPlanet, emotion.id, emotion.planetImage)}
                       alt={emotion.name}
                       onError={(e) => {
                         const target = e.currentTarget;
@@ -304,7 +312,7 @@ export function HomePage({ navigate }: HomePageProps) {
               <div className="cs-b-card">
                 <div className="cs-b-thumb">
                   <img
-                    src={selected.planetImage}
+                    src={getEmotionPlanetImage(currentPlanet, selected.id, selected.planetImage)}
                     alt={selected.name}
                     className="cs-b-thumb-img"
                     onError={(e) => {

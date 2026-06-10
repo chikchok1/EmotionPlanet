@@ -45,6 +45,9 @@ export const getEmotionSummary = (records: EmotionRecord[]) =>
     .filter((item) => item.count > 0)
     .sort((a, b) => b.count - a.count);
 
+export const getLatestEmotion = (records: EmotionRecord[], fallback: EmotionId = "calm"): EmotionId =>
+  records.length ? records[records.length - 1].emotion : fallback;
+
 export const getSafePlanet = (planetIndex: number) => PLANETS[Math.min(planetIndex, PLANETS.length - 1)];
 
 export const getPlanetRecordRange = (planetIndex: number) => {

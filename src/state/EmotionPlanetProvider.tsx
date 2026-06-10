@@ -11,7 +11,7 @@ import { ACCESSORY_BY_ID, LEGACY_ACCESSORY_ID_MAP } from "../data/accessories";
 import { EMOTION_BY_ID } from "../data/emotions";
 import { EMPTY_EQUIPPED, createInitialState, formatDateKey } from "../data/mockRecords";
 import { PLANETS } from "../data/planets";
-import { getPlanetRecordRange } from "../utils/planet";
+import { getPersistentItem, setPersistentItem } from "../utils/persistentStorage";
 import type {
   AccessoryCategory,
   EmotionId,
@@ -20,12 +20,18 @@ import type {
   EquippedAccessories
 } from "../types";
 
-const STORAGE_KEY = "emotionPlanet_v3";
+const STORAGE_KEY = "emotionPlanet_v4";
+const DAILY_AD_REWARD_POINTS = 80;
 
 type EmotionPlanetContextValue = {
   state: EmotionPlanetState;
   viewingPlanetIndex: number;
+  previewBackgroundId: string | null;
+  dailyAdRewardPoints: number;
   setViewingPlanet: (index: number) => void;
+  setPreviewBackground: (backgroundId: string | null) => void;
+  canClaimDailyAdReward: () => boolean;
+  claimDailyAdReward: () => boolean;
   hasRecordedToday: () => boolean;
   getTodayRecord: () => EmotionRecord | null;
   getDominantEmotion: (records?: EmotionRecord[]) => EmotionId;
@@ -87,16 +93,28 @@ const normalizeState = (value: Partial<EmotionPlanetState>): EmotionPlanetState 
     numberOr(value.currentPlanetRecords, fallback.currentPlanetRecords),
     PLANETS[currentPlanetIndex].recordsNeeded
   );
+  const rawRecords = Array.isArray(value.records) ? value.records : fallback.records;
+  const previousRecordPointTotal = rawRecords.reduce(
+    (sum, record) => sum + numberOr(record.points, EMOTION_BY_ID[record.emotion]?.points ?? 0),
+    0
+  );
+  const records = rawRecords.map((record) => ({
+    ...record,
+    points: EMOTION_BY_ID[record.emotion]?.points ?? numberOr(record.points, 0)
+  }));
+  const recordPointDelta =
+    records.reduce((sum, record) => sum + record.points, 0) - previousRecordPointTotal;
 
   return {
     ...fallback,
     ...value,
-    points: numberOr(value.points, fallback.points),
+    points: numberOr(value.points, fallback.points) + recordPointDelta,
+    lastAdRewardDate: typeof value.lastAdRewardDate === "string" ? value.lastAdRewardDate : fallback.lastAdRewardDate,
     currentStreak: numberOr(value.currentStreak, fallback.currentStreak),
     longestStreak: numberOr(value.longestStreak, fallback.longestStreak),
     currentPlanetIndex,
     currentPlanetRecords,
-    records: Array.isArray(value.records) ? value.records : fallback.records,
+    records,
     completedPlanets: Array.isArray(value.completedPlanets)
       ? value.completedPlanets.map((planet) => {
           const completedPlanetIndex = Math.min(Math.max(planet.planetIndex, 0), PLANETS.length - 1);
@@ -115,47 +133,106 @@ const normalizeState = (value: Partial<EmotionPlanetState>): EmotionPlanetState 
   };
 };
 
-const loadInitialState = () => {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) return normalizeState(JSON.parse(raw) as EmotionPlanetState);
-  } catch {
-    // Ignore broken local storage and fall back to seeded demo data.
-  }
+const parseStoredState = (raw: string | null) => {
+  if (!raw) return createInitialState();
 
-  return createInitialState();
+  try {
+    return normalizeState(JSON.parse(raw) as Partial<EmotionPlanetState>);
+  } catch {
+    return createInitialState();
+  }
 };
 
 export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<EmotionPlanetState>(loadInitialState);
+  const [state, setState] = useState<EmotionPlanetState>(() => createInitialState());
   const [viewingPlanetIndex, setViewingPlanetIndex] = useState<number>(
-    () => loadInitialState().currentPlanetIndex
+    () => createInitialState().currentPlanetIndex
   );
+  const [isStorageReady, setIsStorageReady] = useState(false);
+  const [previewBackgroundId, setPreviewBackgroundId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadStoredState = async () => {
+      const storedValue = await getPersistentItem(STORAGE_KEY);
+      const nextState = parseStoredState(storedValue);
+
+      if (cancelled) return;
+      setState(nextState);
+      setViewingPlanetIndex(nextState.currentPlanetIndex);
+      setIsStorageReady(true);
+    };
+
+    void loadStoredState().catch(() => {
+      if (cancelled) return;
+      const fallback = createInitialState();
+      setState(fallback);
+      setViewingPlanetIndex(fallback.currentPlanetIndex);
+      setIsStorageReady(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // 현재 키우는 행성이 바뀌면 (행성 완성 시) 뷰도 자동으로 따라감
   useEffect(() => {
+    if (!isStorageReady) return;
     setViewingPlanetIndex(state.currentPlanetIndex);
-  }, [state.currentPlanetIndex]);
+  }, [isStorageReady, state.currentPlanetIndex]);
 
   const setViewingPlanet = useCallback((index: number) => {
     setViewingPlanetIndex(index);
   }, []);
 
+  const setPreviewBackground = useCallback((backgroundId: string | null) => {
+    setPreviewBackgroundId(backgroundId);
+  }, []);
+
+  const canClaimDailyAdReward = useCallback(() => {
+    return state.lastAdRewardDate !== formatDateKey(new Date());
+  }, [state.lastAdRewardDate]);
+
+  const claimDailyAdReward = useCallback(() => {
+    const today = formatDateKey(new Date());
+    if (state.lastAdRewardDate === today) return false;
+
+    setState((previous) => {
+      if (previous.lastAdRewardDate === today) return previous;
+      return {
+        ...previous,
+        points: previous.points + DAILY_AD_REWARD_POINTS,
+        lastAdRewardDate: today
+      };
+    });
+
+    return true;
+  }, [state.lastAdRewardDate]);
+
   useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }, [state]);
+    if (!isStorageReady) return;
+    void setPersistentItem(STORAGE_KEY, JSON.stringify(state));
+  }, [isStorageReady, state]);
 
   const getPlanetRecords = useCallback(
     (planetIndex: number) => {
-      const { start, end } = getPlanetRecordRange(planetIndex);
-      const visibleEnd =
-        planetIndex === state.currentPlanetIndex
-          ? Math.min(end, start + state.currentPlanetRecords)
-          : end;
+      if (planetIndex === state.currentPlanetIndex) {
+        const start = Math.max(0, state.records.length - state.currentPlanetRecords);
+        return state.records.slice(start);
+      }
 
-      return state.records.slice(start, visibleEnd);
+      const completed = state.completedPlanets.find((planet) => planet.planetIndex === planetIndex);
+      if (!completed) return [];
+
+      const start = state.completedPlanets
+        .filter((planet) => planet.planetIndex < planetIndex)
+        .reduce((sum, planet) => sum + planet.recordCount, 0);
+
+      return state.records.slice(start, start + completed.recordCount);
     },
-    [state.currentPlanetIndex, state.currentPlanetRecords, state.records]
+    [state.completedPlanets, state.currentPlanetIndex, state.currentPlanetRecords, state.records]
   );
 
   const getDominantEmotion = useCallback((records: EmotionRecord[] = state.records): EmotionId => {
@@ -207,8 +284,7 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
         const planet = PLANETS[previous.currentPlanetIndex];
         const nextPlanetRecords = previous.currentPlanetRecords + 1;
         const isCompleted = nextPlanetRecords >= planet.recordsNeeded;
-        const { start, end } = getPlanetRecordRange(previous.currentPlanetIndex);
-        const currentPlanetRecords = records.slice(start, end);
+        const currentPlanetRecords = records.slice(Math.max(0, records.length - nextPlanetRecords));
         const dominantEmotion = getDominantEmotion(currentPlanetRecords);
 
         const baseState: EmotionPlanetState = {
@@ -314,7 +390,12 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
     () => ({
       state,
       viewingPlanetIndex,
+      previewBackgroundId,
+      dailyAdRewardPoints: DAILY_AD_REWARD_POINTS,
       setViewingPlanet,
+      setPreviewBackground,
+      canClaimDailyAdReward,
+      claimDailyAdReward,
       hasRecordedToday,
       getTodayRecord,
       getDominantEmotion,
@@ -330,7 +411,11 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
     [
       state,
       viewingPlanetIndex,
+      previewBackgroundId,
       setViewingPlanet,
+      setPreviewBackground,
+      canClaimDailyAdReward,
+      claimDailyAdReward,
       hasRecordedToday,
       getTodayRecord,
       getDominantEmotion,
@@ -344,6 +429,17 @@ export function EmotionPlanetProvider({ children }: { children: ReactNode }) {
       getEquippedForPlanet
     ]
   );
+
+  if (!isStorageReady) {
+    return (
+      <div className="app-storage-loading">
+        <div className="storage-loading-card">
+          <span className="pixel-label">Mood Planet</span>
+          <strong>기록을 불러오는 중</strong>
+        </div>
+      </div>
+    );
+  }
 
   return <EmotionPlanetContext.Provider value={value}>{children}</EmotionPlanetContext.Provider>;
 }

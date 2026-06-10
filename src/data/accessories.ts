@@ -64,10 +64,12 @@ export const ACCESSORIES: Accessory[] = [
   { id: "purple-galaxy-bg", name: "보라 은하 배경", category: "background", price: 140, col: 1, row: 6, rarity: "epic" },
   { id: "green-aurora-bg", name: "녹색 오로라 배경", category: "background", price: 140, col: 3, row: 6, rarity: "epic" },
   { id: "meteor-shower-bg", name: "유성우 배경", category: "background", price: 170, col: 0, row: 7, rarity: "legendary" },
-  { id: "rainy-window-bg", name: "비 오는 창가", category: "background", price: 130, col: 6, row: 7, rarity: "rare" },
   { id: "moon-cloud-palace-bg", name: "달빛 구름 궁전", category: "background", price: 220, col: 0, row: 0, rarity: "legendary" },
   { id: "crystal-garden-hall-bg", name: "크리스탈 정원방", category: "background", price: 190, col: 0, row: 0, rarity: "epic" },
-  { id: "star-observatory-room-bg", name: "별빛 전망대", category: "background", price: 220, col: 0, row: 0, rarity: "legendary" }
+  { id: "star-observatory-room-bg", name: "별빛 전망대", category: "background", price: 220, col: 0, row: 0, rarity: "legendary" },
+  { id: "warm-sun-cafe-bg", name: "햇살 카페", category: "background", price: 190, col: 0, row: 0, rarity: "epic" },
+  { id: "mint-sunlit-room-bg", name: "민트 햇살 방", category: "background", price: 180, col: 0, row: 0, rarity: "rare" },
+  { id: "starry-night-library-bg", name: "별밤 서재", category: "background", price: 210, col: 0, row: 0, rarity: "legendary" }
 ];
 
 export const ACCESSORY_BY_ID = Object.fromEntries(

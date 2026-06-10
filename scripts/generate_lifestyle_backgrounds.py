@@ -389,9 +389,9 @@ def save(image: Image.Image, filename: str) -> None:
 
 
 def main() -> None:
-    save(rainy_window(), "03_rainy_window_room.png")
-    # 01-02 and 04-07 are supplied final artwork or intentionally removed.
+    # Lifestyle backgrounds are curated final artwork.
     # Keep them out of this generator so reruns do not overwrite curated assets.
+    pass
 
 
 if __name__ == "__main__":

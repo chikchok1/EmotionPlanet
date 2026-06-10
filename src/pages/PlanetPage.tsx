@@ -1,25 +1,29 @@
 import { ACCESSORY_BY_ID, ACCESSORY_CATEGORIES, CATEGORY_LABELS } from "../data/accessories";
 import { EMOTION_BY_ID } from "../data/emotions";
 import { PLANETS } from "../data/planets";
+import { DailyAdRewardButton } from "../components/layout/DailyAdRewardButton";
 import { AccessorySprite } from "../components/planet/AccessorySprite";
 import { PlanetAvatar } from "../components/planet/PlanetAvatar";
 import { PlanetProgress } from "../components/planet/PlanetProgress";
 import { useEmotionPlanet } from "../state/EmotionPlanetProvider";
+import { getEmotionPlanetImage } from "../utils/emotionPlanetImage";
 import type { AccessoryCategory, RoutePath } from "../types";
 import { rememberAccessoryCategory } from "../utils/accessoryCategory";
-import { getCurrentStage, getEmotionSummary, getStageLabel } from "../utils/planet";
+import { getCurrentStage, getEmotionSummary, getLatestEmotion, getStageLabel } from "../utils/planet";
 
 type PlanetPageProps = {
   navigate: (path: RoutePath) => void;
 };
 
 export function PlanetPage({ navigate }: PlanetPageProps) {
-  const { state, getDominantEmotion, getPlanetRecords, viewingPlanetIndex, setViewingPlanet } = useEmotionPlanet();
+  const { state, getDominantEmotion, getPlanetRecords, getTodayRecord, viewingPlanetIndex, setViewingPlanet } = useEmotionPlanet();
   const planet = PLANETS[viewingPlanetIndex];
   const isViewingCurrent = viewingPlanetIndex === state.currentPlanetIndex;
   const completedPlanet = state.completedPlanets.find((p) => p.planetIndex === viewingPlanetIndex);
   const planetRecords = getPlanetRecords(viewingPlanetIndex);
   const dominantEmotion = getDominantEmotion(planetRecords);
+  const todayEmotion = getTodayRecord()?.emotion;
+  const avatarEmotion = todayEmotion ?? getLatestEmotion(planetRecords, dominantEmotion);
   const dominant = EMOTION_BY_ID[dominantEmotion];
   const emotionSummary = getEmotionSummary(planetRecords);
   const equippedToShow = isViewingCurrent ? state.equippedAccessories : (completedPlanet?.equippedAccessories ?? state.equippedAccessories);
@@ -71,9 +75,12 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
             STAGE {stage} — {getStageLabel(stage)}
           </p>
         </div>
-        <div className="point-pill">
-          <span>⭐</span>
-          {state.points.toLocaleString()}pt
+        <div className="top-actions">
+          <div className="point-pill">
+            <span>⭐</span>
+            {state.points.toLocaleString()}pt
+          </div>
+          <DailyAdRewardButton />
         </div>
       </header>
 
@@ -87,7 +94,7 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
         />
         <PlanetAvatar
           planet={planet}
-          emotion={dominantEmotion}
+          emotion={avatarEmotion}
           equipped={equippedToShow}
           size={210}
           animate
@@ -108,7 +115,7 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
           {/* 이모지 대신 행성 이미지 */}
           <div className="dominant-emotion-planet-thumb">
             <img
-              src={dominant.planetImage}
+              src={getEmotionPlanetImage(planet, dominant.id, dominant.planetImage)}
               alt={dominant.name}
               className="dominant-emotion-planet-img"
               onError={(e) => {
@@ -141,7 +148,7 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
               }}
             >
               <img
-                src={emotion.planetImage}
+                src={getEmotionPlanetImage(planet, emotion.id, emotion.planetImage)}
                 alt={emotion.name}
                 className="emotion-planet-chip-img"
                 onError={(e) => {
@@ -196,7 +203,7 @@ export function PlanetPage({ navigate }: PlanetPageProps) {
                 {/* 이모지 대신 행성 이미지 썸네일 */}
                 <div className="record-planet-thumb">
                   <img
-                    src={emotion.planetImage}
+                    src={getEmotionPlanetImage(planet, emotion.id, emotion.planetImage)}
                     alt={emotion.name}
                     className="record-planet-img"
                     onError={(e) => {

@@ -11,16 +11,17 @@ type AppShellProps = {
 };
 
 export function AppShell({ route, navigate, children }: AppShellProps) {
-  const { state, getEquippedForPlanet, viewingPlanetIndex } = useEmotionPlanet();
+  const { state, getEquippedForPlanet, previewBackgroundId, viewingPlanetIndex } = useEmotionPlanet();
   const backgroundPlanetIndex =
     route === "/planet" || route === "/shop" || route === "/customize"
       ? viewingPlanetIndex
       : state.currentPlanetIndex;
   const equipped = getEquippedForPlanet(backgroundPlanetIndex);
-  const backgroundUrl = getSpaceBackgroundUrl(equipped.background);
+  const backgroundId = route === "/shop" && previewBackgroundId ? previewBackgroundId : equipped.background;
+  const backgroundUrl = getSpaceBackgroundUrl(backgroundId);
   const frameStyle = backgroundUrl
     ? ({
-        "--app-frame-background": `linear-gradient(rgba(4,5,16,0.18), rgba(4,5,16,0.34)), url('${backgroundUrl}')`
+        "--app-frame-background": `url('${backgroundUrl}')`
       } as CSSProperties)
     : undefined;
 

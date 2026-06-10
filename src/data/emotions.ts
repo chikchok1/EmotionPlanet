@@ -2,6 +2,7 @@ import type { Emotion, EmotionId } from "../types";
 
 const face = (filename: string) => `/figma-assets/planet_face_expression_layers_clean/${filename}`;
 const planet = (filename: string) => `/emotion/${filename}`;
+export const RECORD_EMOTION_POINTS = 30;
 
 export const EMOTIONS: Emotion[] = [
   {
@@ -11,7 +12,7 @@ export const EMOTIONS: Emotion[] = [
     color: "#F5C842",
     bgColor: "#1A1200",
     borderColor: "#F5C842",
-    points: 30,
+    points: RECORD_EMOTION_POINTS,
     description: "행복하고 즐거운 하루!",
     faceImage: face("01_happy_smile.png"),
     planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_29 (1).png"),
@@ -23,7 +24,7 @@ export const EMOTIONS: Emotion[] = [
     color: "#34D399",
     bgColor: "#001A0D",
     borderColor: "#10B981",
-    points: 20,
+    points: RECORD_EMOTION_POINTS,
     description: "차분하고 평화로운 하루",
     faceImage: face("03_calm_closed_eye_smile.png"),
     planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_29 (2).png"),
@@ -35,7 +36,7 @@ export const EMOTIONS: Emotion[] = [
     color: "#B080FF",
     bgColor: "#0D0020",
     borderColor: "#9060E0",
-    points: 30,
+    points: RECORD_EMOTION_POINTS,
     description: "두근두근 설레는 하루!",
     faceImage: face("02_big_excited_smile.png"),
     planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_29 (3).png"),
@@ -47,7 +48,7 @@ export const EMOTIONS: Emotion[] = [
     color: "#9CA3AF",
     bgColor: "#111318",
     borderColor: "#6B7280",
-    points: 15,
+    points: RECORD_EMOTION_POINTS,
     description: "힘들지만 수고했어요",
     faceImage: face("09_tired.png"),
     planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_29 (4).png"),
@@ -59,7 +60,7 @@ export const EMOTIONS: Emotion[] = [
     color: "#60A5FA",
     bgColor: "#00061A",
     borderColor: "#3B82F6",
-    points: 15,
+    points: RECORD_EMOTION_POINTS,
     description: "괜찮아요, 내일은 더 나을 거예요",
     faceImage: face("05_sad_crying.png"),
     planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_30 (5).png"),
@@ -71,7 +72,7 @@ export const EMOTIONS: Emotion[] = [
     color: "#FF6B6B",
     bgColor: "#1A0000",
     borderColor: "#EF4444",
-    points: 20,
+    points: RECORD_EMOTION_POINTS,
     description: "화가 났군요, 잠깐 쉬어가요",
     faceImage: face("06_angry.png"),
     planetImage: planet("ChatGPT Image 2026년 5월 28일 오후 03_13_30 (6).png"),
