@@ -21,7 +21,7 @@ import type {
 } from "../types";
 
 const STORAGE_KEY = "emotionPlanet_v4";
-const DAILY_AD_REWARD_POINTS = 80;
+const DAILY_AD_REWARD_POINTS = 50;
 
 type EmotionPlanetContextValue = {
   state: EmotionPlanetState;
